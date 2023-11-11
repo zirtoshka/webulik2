@@ -1,6 +1,10 @@
 package validator;
 
+import lombok.Getter;
+
+import java.util.ArrayList;
 import java.util.List;
+
 
 public class PointsStorage {
     private List<Point> points;
@@ -8,10 +12,15 @@ public class PointsStorage {
         this.points=points;
     }
     //todo: it is ebola
-//    public ResultList(){
-//        this(new ArrayList<>());
-//    }
-//
-//    public ResultList(ArrayList<Object> objects) {
-//    }
+    public PointsStorage(){
+        this.points = new ArrayList<>();
+    }
+
+    public PointsStorage(ArrayList<Object> objects) {
+    }
+    public List<Point> getPoints(){
+        return points;
+    }
+
+
 }

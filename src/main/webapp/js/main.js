@@ -1,5 +1,6 @@
 "use script";
 const resultsDataKey = "results";
+
 class Checker {
 
 
@@ -7,7 +8,7 @@ class Checker {
 
         this.yInput = document.getElementById("y-value");
         this.rRadios = document.getElementsByName("radio");
-        this.submit= document.getElementById("submit-button")
+        this.submit = document.getElementById("submit-button")
 
 
         this.rValue;
@@ -18,7 +19,6 @@ class Checker {
 
         let disableVideoState = localStorage.getItem("disable-video-state");
         this.disableVideoCheckbox.checked = disableVideoState === "true";
-
 
 
         this.setupEventListenersX();
@@ -41,7 +41,6 @@ class Checker {
     }
 
 
-
     setupEventListenersX() {
         this.xSelect.addEventListener("change", this.handleXSelectChange.bind(this));
     }
@@ -55,17 +54,18 @@ class Checker {
     setupEventListenersDIsableVideo() {
         this.disableVideoCheckbox.addEventListener('click', this.handleDisableVideoSelectChange.bind(this));
     }
+
     handleDisableVideoSelectChange(event) {
         localStorage.setItem("disable-video-state", this.disableVideoCheckbox.checked);
     }
 
-    setupEventListenersY(){
-        this.yInput.addEventListener("input",this.handleYInputChange.bind(this));
+    setupEventListenersY() {
+        this.yInput.addEventListener("input", this.handleYInputChange.bind(this));
     }
 
 
-    handleYInputChange(event){
-        this.yInput.value=event.target.value;
+    handleYInputChange(event) {
+        this.yInput.value = event.target.value;
         localStorage.setItem("y-value", this.yInput.value);
     }
 
@@ -121,27 +121,23 @@ class Checker {
 
         return [parsedX, parsedY, parsedR];
     }
+
     async formSubmitHandler(e) {
         e.preventDefault();
         this.submit.textContent = "Checking...";
         this.submit.disabled = true;
 
         const [x, y, r] = this.validateAndParse(this.xSelect.value, this.yInput.value, this.rValue);
-        //todo: delete ebola
-        console.log("ebolaaaaa");
         if (x !== null && y !== null && r !== null) {
-            console.log("ebolaaaaa2"+x+y+r);
             try {
                 const response = await fetch("app", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ x, y, r })
+                    body: JSON.stringify({x, y, r})
                 });
-                console.log("ebolaaaaa3");
                 const json = await response.json();
-                console.log("ebolaaaaa4");
                 if (response.status === 200) {
                     if (!document.getElementById("disable-video").checked) {
                         let isKill = false;
@@ -158,7 +154,7 @@ class Checker {
                     this.showToast("Server error: " + json.message);
                 }
             } catch (error) {
-                console.log(ErrorEvent);
+                console.log(ErrorEvent+error);
                 this.showToast("Server unreachable :(\nTry again later ");
             }
         }
@@ -166,8 +162,8 @@ class Checker {
         this.submit.textContent = "Check";
 
 
-
     }
+
     initTableResults() {
         var data = this.sessionStorage.getItem(resultsDataKey);
 
@@ -212,7 +208,7 @@ class Checker {
 
         const yValue = localStorage.getItem("y-value");
         if (yValue) {
-            this.yInput.value= yValue;
+            this.yInput.value = yValue;
         }
 
         const rValueNew = localStorage.getItem("r-value");
@@ -224,14 +220,8 @@ class Checker {
 
         }
     }
-    // restoreDisableVideoState() {
-    //     // Восстановление состояния кнопки "disable-video" из localStorage
-    //     const disableVideoCheckbox = document.getElementById("disable-video");
-    //     const disableVideoState = localStorage.getItem("disable-video-state");
-    //     if (disableVideoState !== null) {
-    //       disableVideoCheckbox.checked = (disableVideoState === "true");
-    //     }
-    //   }
+
+
 }
 
 const check = new Checker();

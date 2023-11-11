@@ -2,18 +2,24 @@ package servlets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.google.gson.Gson;
 import exceptions.WrongDataException;
 import validator.DataChecker;
 import validator.Point;
+import validator.PointsStorage;
 
-import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.List;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @WebServlet(name = "AreaCheck", value = "/area-check")
 public class AreaCheckServlet extends HttpServlet {
@@ -25,7 +31,15 @@ public class AreaCheckServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         startTime = System.currentTimeMillis();
+//        LocalDateTime start=LocalDateTime.now();
+        HttpSession session = req.getSession();
+        PrintWriter writer = resp.getWriter();
+        PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
+        if (tableContent == null) tableContent = new PointsStorage();
+        List<Point> points = tableContent.getPoints();
+        LocalDateTime currentDateTime = LocalDateTime.now();
         JsonNode requestData = mapper.readTree(req.getReader());
+        System.out.println("jopajopa");
 
         double x = 10;//todo: no initialization
         try {
@@ -35,21 +49,41 @@ public class AreaCheckServlet extends HttpServlet {
                 //todo: to do smt
                 System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
             }
-            System.out.println(x);
+//            System.out.println(x);
             double y = requestData.get("y").asDouble();
             double r = requestData.get("r").asDouble();
-            //todo: time
-//            int timeReq=Integer.parseInt(req.getParameter("time"))
+            System.out.println(x);
+            System.out.println(y);
+            System.out.println(r);
+
             if (dataChecker.checkXYR(x, y, r)) {
-                //todo пошел нахуй
+                Gson gson = new Gson();
+                Map<String, Object> json = new HashMap<>();
+                json.put("x", x);
+                json.put("y", y);
+                json.put("r", r);
+                json.put("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
+                json.put("now", dataFormatter(LocalDateTime.now()));
+                json.put("script_time", System.currentTimeMillis()-startTime+" ms");
+                String jsonString = gson.toJson(json);
+                PrintWriter out = resp.getWriter();
+                out.print(jsonString);
+                out.flush();
+
             }
-            if (dataChecker.checkXYR(x, y, r)) {
-                //todo kill
-            }
+            System.out.println("eblan");
             // TODO: miss
             //todo: make resul
         } catch (WrongDataException e) {
+            System.out.println("eblanerror");
         }
+        System.out.println("ebobo");
+        if (points.size() > 0) {
+            writer.println(convertToJSON(points));
+        }
+        writer.close();
+        session.setAttribute("tableContent", tableContent);
+
     }
 
     private String convertToJSON(List<Point> points) {
@@ -64,5 +98,14 @@ public class AreaCheckServlet extends HttpServlet {
         output.append("]");
         return output.toString();
     }
+
+    private String dataFormatter(LocalDateTime localeDataTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = localeDataTime.format(formatter);
+
+        return formattedDateTime;
+    }
+//    LocalDateTime currentDateTime = LocalDateTime.now();
+
 
 }

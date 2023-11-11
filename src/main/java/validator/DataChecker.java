@@ -16,9 +16,11 @@ public class DataChecker {
 
     //todo: select -> checkbox
     public boolean checkXYR(double x, double y, double r) throws WrongDataException {
-        if (!checkX(x)) throw new WrongDataException("x = " + x + " is invalid value");
-        if (!checkY(y)) throw new WrongDataException("y = " + y + " is invalid value");
-        if (!checkR(r)) throw new WrongDataException("r = " + r + " is invalid value");
+        if (checkX(x)) {
+            throw new WrongDataException("x = " + x + " is invalid value");
+        }
+        if (checkY(y)) throw new WrongDataException("y = " + y + " is invalid value");
+        if (checkR(r)) throw new WrongDataException("r = " + r + " is invalid value");
         return true;
 
     }

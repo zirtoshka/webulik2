@@ -7,11 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Controller", value="/app")
+@WebServlet(name = "Controller", value="/app", urlPatterns = "/app")
 public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+        System.out.println("eboladfsfsdfsd");
     }
 
     @Override
