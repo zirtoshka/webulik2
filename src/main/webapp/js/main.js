@@ -126,37 +126,38 @@ class Checker {
         e.preventDefault();
         this.submit.textContent = "Checking...";
         this.submit.disabled = true;
+        let isForm = true;
 
         const [x, y, r] = this.validateAndParse(this.xSelect.value, this.yInput.value, this.rValue);
         if (x !== null && y !== null && r !== null) {
-            try {
+            // try {
                 const response = await fetch("app", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({x, y, r})
+                    body: JSON.stringify({x, y, r, isForm})
                 });
-                const json = await response.json();
-                if (response.status === 200) {
-                    if (!document.getElementById("disable-video").checked) {
-                        let isKill = false;
-                        if (json.result === "kill") {
-                            isKill = true;
-                        }
-                        await this.animations.shoot(x, y, r, isKill);
-                    }
-
-
-                    var data = [x, y, r, json.now, json.script_time, json.result];
-                    this.addTableResults(data);
-                } else {
-                    this.showToast("Server error: " + json.message);
-                }
-            } catch (error) {
-                console.log(ErrorEvent+error);
-                this.showToast("Server unreachable :(\nTry again later ");
-            }
+                // const json = await response.json();
+                // if (response.status === 200) {
+                //     if (!document.getElementById("disable-video").checked) {
+                //         let isKill = false;
+                //         if (json.result === "kill") {
+                //             isKill = true;
+                //         }
+                //         await this.animations.shoot(x, y, r, isKill);
+                //     }
+                //
+                //
+                //     var data = [x, y, r, json.now, json.script_time, json.result];
+                //     this.addTableResults(data);
+                // } else {
+                //     this.showToast("Server error: " + json.message);
+                // }
+            // } catch (error) {
+            //     console.log(ErrorEvent+error);
+            //     this.showToast("Server unreachable :(\nTry again later ");
+            // }
         }
         this.submit.disabled = false;
         this.submit.textContent = "Check";

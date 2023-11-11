@@ -9,6 +9,7 @@ import validator.DataChecker;
 import validator.Point;
 import validator.PointsStorage;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,9 +53,32 @@ public class AreaCheckServlet extends HttpServlet {
 //            System.out.println(x);
             double y = requestData.get("y").asDouble();
             double r = requestData.get("r").asDouble();
+            boolean isForm = requestData.get("isForm").asBoolean();
             System.out.println(x);
             System.out.println(y);
             System.out.println(r);
+            System.out.println(isForm);
+
+            if (isForm){
+                req.setAttribute("x", x);
+                req.setAttribute("y", y);
+                req.setAttribute("r", r);
+                req.setAttribute("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
+                req.setAttribute("now", dataFormatter(LocalDateTime.now()));
+                req.setAttribute("script_time", System.currentTimeMillis()-startTime+" ms");
+
+                resp.setContentType("text/html");
+
+                ServletContext servletContext = getServletContext();
+                System.out.println("Before forwarding to result.jsp");
+
+                req.getRequestDispatcher("/WEB-INF/result.jsp").forward(req, resp);
+                System.out.println("After forwarding to result.jsp");
+
+                resp.getWriter().println("script_time: " + req.getAttribute("script_time"));
+                resp.getWriter().flush();
+
+        }else {
 
             if (dataChecker.checkXYR(x, y, r)) {
                 Gson gson = new Gson();
@@ -69,12 +93,11 @@ public class AreaCheckServlet extends HttpServlet {
                 PrintWriter out = resp.getWriter();
                 out.print(jsonString);
                 out.flush();
+            }}
 
-            }
-            System.out.println("eblan");
-            // TODO: miss
-            //todo: make resul
+
         } catch (WrongDataException e) {
+            //todo
             System.out.println("eblanerror");
         }
         System.out.println("ebobo");
