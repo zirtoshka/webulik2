@@ -96,8 +96,8 @@ class Checker {
 
     validateAndParse(x, y, r) {
         const xValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3];
-        const yMin = -5, yMax = 5;
-        const rValues = [1, 1.5, 2, 2.5, 3];
+        const yMin = -5, yMax = 3;
+        const rValues = [1, 2, 3, 4, 5];
         let parsedX, parsedY, parsedR;
 
         parsedX = parseInt(x);
@@ -108,11 +108,11 @@ class Checker {
 
         parsedY = parseFloat(y);
         if (isNaN(y.trim()) || isNaN(parsedY) || yMin > parsedY || parsedY > yMax) {
-            this.showToast("Please input correct Y value: [-5; 5]");
+            this.showToast("Please input correct Y value: [-5; 3]");
             return [null, null, null];
         }
 
-        parsedR = parseFloat(r);
+        parsedR = parseInt(r);
         if (isNaN(r.trim()) || isNaN(parsedR) || !rValues.includes(parsedR)) {
             this.showToast("Choose only one checkbox" + parsedR);
             return [null, null, null];
@@ -130,7 +130,7 @@ class Checker {
         //todo: delete ebola
         console.log("ebolaaaaa");
         if (x !== null && y !== null && r !== null) {
-            console.log("ebolaaaaa2");
+            console.log("ebolaaaaa2"+x+y+r);
             try {
                 const response = await fetch("app", {
                     method: "POST",

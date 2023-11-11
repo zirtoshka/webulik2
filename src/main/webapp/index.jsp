@@ -20,8 +20,8 @@
 
 </div>
 <header class="header">
-    <h1> Зайцева Ирина Сергеевна P3209 1993</h1>
-    <!-- <h1> Zaitseva Irina Sergeevna P3209 1993</h1> -->
+<%--    <h1> Зайцева Ирина Сергеевна P3209 1993</h1>--%>
+    <h1> Zaitseva Irina Sergeevna P3209 1993</h1>
 </header>
 <br>
 <div class="container">
