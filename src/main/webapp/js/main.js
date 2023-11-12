@@ -131,7 +131,7 @@ class Checker {
         const [x, y, r] = this.validateAndParse(this.xSelect.value, this.yInput.value, this.rValue);
         if (x !== null && y !== null && r !== null) {
             // try {
-                const response = await fetch("app", {
+                const response =   fetch("app", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

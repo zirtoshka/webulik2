@@ -7,12 +7,12 @@ public class Point {
     double r;
     boolean isKill;
     String scriptTime;
-    String currentTime;
+    String now;
 
-    public Point(double x, double y, double r, boolean isKill, String scriptTime, String currentTime) {
+    public Point(double x, double y, double r, boolean isKill, String scriptTime, String now) {
         this.x = x;
         this.y = y;
-        this.currentTime=currentTime;
+        this.now = now;
         this.r=r;
         this.isKill=isKill;
         this.scriptTime=scriptTime;

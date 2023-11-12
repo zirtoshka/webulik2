@@ -4,4 +4,16 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
+
+  <servlet>
+    <servlet-name>result</servlet-name>
+    <jsp-file>/result.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>result</servlet-name>
+    <url-pattern>/zalupa</url-pattern>
+  </servlet-mapping>
+
 </web-app>
