@@ -31,46 +31,45 @@ public class AreaCheckServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
 //        resp.sendRedirect("https://www.google.com");
-//        startTime = System.currentTimeMillis();
-////        LocalDateTime start=LocalDateTime.now();
-//        HttpSession session = req.getSession();
-//        PrintWriter writer = resp.getWriter();
-//        PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
-//        if (tableContent == null) tableContent = new PointsStorage();
-//        List<Point> points = tableContent.getPoints();
-//        LocalDateTime currentDateTime = LocalDateTime.now();
-//        JsonNode requestData = mapper.readTree(req.getReader());
-//        System.out.println("jopajopa");
-//
-//        double x = 10;//todo: no initialization
-//        try {
-//            try {
-//                x = requestData.get("x").asDouble();
-//            } catch (Exception e) {
-//                //todo: to do smt
-//                System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
-//            }
-////            System.out.println(x);
-//            double y = requestData.get("y").asDouble();
-//            double r = requestData.get("r").asDouble();
-//            boolean isForm = requestData.get("isForm").asBoolean();
+        startTime = System.currentTimeMillis();
+//        LocalDateTime start=LocalDateTime.now();
+        HttpSession session = req.getSession();
+        PrintWriter writer = resp.getWriter();
+        PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
+        if (tableContent == null) tableContent = new PointsStorage();
+        List<Point> points = tableContent.getPoints();
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        JsonNode requestData = mapper.readTree(req.getReader());
+        System.out.println("jopajopa");
+
+        double x = 10;//todo: no initialization
+        try {
+            try {
+                x = requestData.get("x").asDouble();
+            } catch (Exception e) {
+                //todo: to do smt
+                System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
+            }
 //            System.out.println(x);
-//            System.out.println(y);
-//            System.out.println(r);
-//            System.out.println(isForm);
-//
-//            if (isForm){
-//
-//
-//
-//                req.setAttribute("x", x);
-//                req.setAttribute("y", y);
-//                req.setAttribute("r", r);
-//                req.setAttribute("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
-//                req.setAttribute("now", dataFormatter(LocalDateTime.now()));
-//                req.setAttribute("script_time", System.currentTimeMillis()-startTime+" ms");
-//
+            double y = requestData.get("y").asDouble();
+            double r = requestData.get("r").asDouble();
+            boolean isForm = requestData.get("isForm").asBoolean();
+            System.out.println(x);
+            System.out.println(y);
+            System.out.println(r);
+            System.out.println(isForm);
+
+            if (isForm){
+                req.getSession().setAttribute("x", x);
+                req.setAttribute("y", y);
+                req.setAttribute("r", r);
+                req.setAttribute("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
+                req.setAttribute("now", dataFormatter(LocalDateTime.now()));
+                req.setAttribute("script_time", System.currentTimeMillis()-startTime+" ms");
+                resp.sendRedirect("./zalupa");
+
 ////                resp.setContentType("text/html");
 ////                String path = req.getContextPath() + "/result.jsp";
 ////                System.out.println(path);
@@ -88,34 +87,34 @@ public class AreaCheckServlet extends HttpServlet {
 ////                resp.getWriter().println("script_time: " + req.getAttribute("script_time"));
 ////                resp.getWriter().flush();
 //
-//        }else {
-//
-//            if (dataChecker.checkXYR(x, y, r)) {
-//                Gson gson = new Gson();
-//                Map<String, Object> json = new HashMap<>();
-//                json.put("x", x);
-//                json.put("y", y);
-//                json.put("r", r);
-//                json.put("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
-//                json.put("now", dataFormatter(LocalDateTime.now()));
-//                json.put("script_time", System.currentTimeMillis()-startTime+" ms");
-//                String jsonString = gson.toJson(json);
-//                PrintWriter out = resp.getWriter();
-//                out.print(jsonString);
-//                out.flush();
-//            }}
+        }else {
+
+            if (dataChecker.checkXYR(x, y, r)) {
+                Gson gson = new Gson();
+                Map<String, Object> json = new HashMap<>();
+                json.put("x", x);
+                json.put("y", y);
+                json.put("r", r);
+                json.put("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
+                json.put("now", dataFormatter(LocalDateTime.now()));
+                json.put("script_time", System.currentTimeMillis()-startTime+" ms");
+                String jsonString = gson.toJson(json);
+                PrintWriter out = resp.getWriter();
+                out.print(jsonString);
+                out.flush();
+            }}
 
 
-//        } catch (WrongDataException e) {
-//            //todo
-//            System.out.println("eblanerror");
-//        }
-//        System.out.println("ebobo");
-//        if (points.size() > 0) {
-//            writer.println(convertToJSON(points));
-//        }
-//        writer.close();
-//        session.setAttribute("tableContent", tableContent);
+        } catch (WrongDataException e) {
+            //todo
+            System.out.println("eblanerror");
+        }
+        System.out.println("ebobo");
+        if (points.size() > 0) {
+            writer.println(convertToJSON(points));
+        }
+        writer.close();
+        session.setAttribute("tableContent", tableContent);
 
     }
 

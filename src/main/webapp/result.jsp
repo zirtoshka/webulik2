@@ -19,9 +19,9 @@
         <th>R</th>
     </tr>
     <tr>
-        <td>${x}</td>
-        <td>${y}</td>
-        <td>${r}</td>
+        <td><%= request.getSession().getAttribute("x")%></td>
+        <td><%= request.getAttribute("y")%></td>
+        <td><%= request.getSession().getAttribute("r")%></td>
     </tr>
 </table>
 </body>
