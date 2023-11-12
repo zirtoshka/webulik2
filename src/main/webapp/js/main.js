@@ -130,13 +130,20 @@ class Checker {
 
         const [x, y, r] = this.validateAndParse(this.xSelect.value, this.yInput.value, this.rValue);
         if (x !== null && y !== null && r !== null) {
-            // try {
-                const response =   fetch("app", {
+            try {
+                const response =  await fetch("app", {
                     method: "POST",
+                    mode: "no-cors",
+                    redirect: "follow",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({x, y, r, isForm})
+                }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }})  .catch(function(err) {
+                    console.info(err + " url: " + url);
                 });
                 // const json = await response.json();
                 // if (response.status === 200) {
@@ -154,10 +161,10 @@ class Checker {
                 // } else {
                 //     this.showToast("Server error: " + json.message);
                 // }
-            // } catch (error) {
-            //     console.log(ErrorEvent+error);
-            //     this.showToast("Server unreachable :(\nTry again later ");
-            // }
+            } catch (error) {
+                console.log(ErrorEvent+error);
+                this.showToast("Server unreachable :(\nTry again later ");
+            }
         }
         this.submit.disabled = false;
         this.submit.textContent = "Check";

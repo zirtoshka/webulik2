@@ -11,10 +11,15 @@ import java.io.IOException;
 public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
-        System.out.println("eboladfsfsdfsd");
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.sendRedirect("https://www.google.com");
+//        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
     }
-
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.sendRedirect("https://www.google.com");
+//        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+    }
     @Override
     public String getServletInfo() {
         return "servlet.ControllerServlet - defines the type of request, " +

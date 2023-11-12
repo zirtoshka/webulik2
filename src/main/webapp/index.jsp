@@ -93,7 +93,7 @@
 
     <div class="graph">
         <h1>Graph</h1>
-        <img src="assets/img.png" alt="img" width="400">
+<%--        <img src="assets/img.png" alt="img" width="400">--%>
         <br>
         <div class="disable-button">
             <label class="item" for="disable-video">disable video</label>

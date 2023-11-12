@@ -31,7 +31,7 @@ public class AreaCheckServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect("https://google.com");
+//        resp.sendRedirect("https://www.google.com");
 //        startTime = System.currentTimeMillis();
 ////        LocalDateTime start=LocalDateTime.now();
 //        HttpSession session = req.getSession();
