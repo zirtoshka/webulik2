@@ -16,8 +16,7 @@ public class ControllerServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.sendRedirect("https://www.google.com");
-//        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
     }
     @Override
     public String getServletInfo() {

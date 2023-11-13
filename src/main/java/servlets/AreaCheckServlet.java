@@ -68,7 +68,7 @@ public class AreaCheckServlet extends HttpServlet {
                 req.setAttribute("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
                 req.setAttribute("now", dataFormatter(LocalDateTime.now()));
                 req.setAttribute("script_time", System.currentTimeMillis()-startTime+" ms");
-                resp.sendRedirect("./zalupa");
+                resp.sendRedirect("./result");
 
 ////                resp.setContentType("text/html");
 ////                String path = req.getContextPath() + "/result.jsp";

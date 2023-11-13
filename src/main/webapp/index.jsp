@@ -30,19 +30,47 @@
             <h1>Data input</h1>
             <div class="x-input">
                 <label id="x-label">X:</label>
-                <select id="x-value" class="x-select">
-                    <!-- autocomplete="on" -->
-                    <option value="-5">-5</option>
-                    <option value="-4">-4</option>
-                    <option value="-3">-3</option>
-                    <option value="-2">-2</option>
-                    <option value="-1">-1</option>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
+                <div class="x-checkbox">
+                    <input class="x-value"  type="checkbox" id="-5" name="checkbox"  value="-5"/>
+<%--                    checked--%>
+                    <label for="-5">-5</label>
+                </div>
 
-                </select>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="-4" name="checkbox"  value="-4"/>
+                    <label for="-4">-4</label>
+                </div>
+
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="-3" name="checkbox"  value="-3"/>
+                    <label for="-3">-3</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="-2" name="checkbox"  value="-2"/>
+                    <label for="-2">-2</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="-1" name="checkbox"  value="-1"/>
+                    <label for="-1">-1</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="0" name="checkbox"  value="0"/>
+                    <label for="0">0</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="1" name="checkbox"  value="1"/>
+                    <label for="1">1</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="2" name="checkbox"  value="2"/>
+                    <label for="2">2</label>
+                </div>
+                <div class="x-checkbox">
+                    <input class="x-value" type="checkbox" id="3" name="checkbox"  value="3"/>
+                    <label for="3">3</label>
+                </div>
+
+
             </div>
             <br>
             <div class="y-input">

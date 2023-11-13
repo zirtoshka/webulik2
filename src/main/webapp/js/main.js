@@ -9,13 +9,14 @@ class Checker {
         this.yInput = document.getElementById("y-value");
         this.rRadios = document.getElementsByName("radio");
         this.submit = document.getElementById("submit-button")
+        this.xCheckboxes = document.getElementsByName("checkbox");
+        this.xValues = new Array();
 
 
         this.rValue;
 
         this.disableVideoCheckbox = document.getElementById("disable-video");
 
-        this.xSelect = document.getElementById("x-value");
 
         let disableVideoState = localStorage.getItem("disable-video-state");
         this.disableVideoCheckbox.checked = disableVideoState === "true";
@@ -36,20 +37,9 @@ class Checker {
         form.addEventListener("submit", this.formSubmitHandler.bind(this));
         this.animations = new AnimationProcessor();
 
-        // this.restoreDisableVideoState();
 
     }
 
-
-    setupEventListenersX() {
-        this.xSelect.addEventListener("change", this.handleXSelectChange.bind(this));
-    }
-
-    handleXSelectChange(event) {
-        this.xSelect.value = event.target.value;
-        localStorage.setItem("x-value", this.xSelect.value);
-
-    }
 
     setupEventListenersDIsableVideo() {
         this.disableVideoCheckbox.addEventListener('click', this.handleDisableVideoSelectChange.bind(this));
@@ -75,10 +65,33 @@ class Checker {
         });
     }
 
+    setupEventListenersX() {
+        this.xCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", this.handleCheckboxChange.bind(this))
+        });
+    }
+
+
     handleRadioChange(event) {
         this.rValue = event.target.value;
-
         localStorage.setItem("r-value", this.rValue);
+    }
+
+    handleCheckboxChange(event) {
+        let checkboxValue = event.target.value;
+        // Проверяем, был ли данный чекбокс отмечен или снят
+        if (event.target.checked) {
+            // Если отмечен, добавляем значение в массив
+            this.xValues.push(checkboxValue);
+        } else {
+            // Если снят, удаляем значение из массива
+            const index = this.xValues.indexOf(checkboxValue);
+            if (index !== -1) {
+                this.xValues.splice(index, 1);
+            }
+        }
+        // Сохраняем обновленные значения в localStorage
+        localStorage.setItem("x-value", JSON.stringify(this.xValues));
     }
 
     showToast(message) {
@@ -90,7 +103,7 @@ class Checker {
 
         setTimeout(() => {
             toast.classList.remove("show");
-        }, 3000); // Скрывать уведомление через 3 секунды (по желанию)
+        }, 3000); // Скрывать уведомление через 3 секунды
     }
 
 
@@ -128,10 +141,10 @@ class Checker {
         this.submit.disabled = true;
         let isForm = true;
 
-        const [x, y, r] = this.validateAndParse(this.xSelect.value, this.yInput.value, this.rValue);
+        const [x, y, r] = this.validateAndParse(this.xCheckboxes.values, this.yInput.value, this.rValue);
         if (x !== null && y !== null && r !== null) {
             try {
-                const response =  await fetch("app", {
+                const response = await fetch("app", {
                     method: "POST",
                     mode: "no-cors",
                     redirect: "follow",
@@ -140,9 +153,10 @@ class Checker {
                     },
                     body: JSON.stringify({x, y, r, isForm})
                 }).then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }})  .catch(function(err) {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                }).catch(function (err) {
                     console.info(err + " url: " + url);
                 });
                 // const json = await response.json();
@@ -162,9 +176,13 @@ class Checker {
                 //     this.showToast("Server error: " + json.message);
                 // }
             } catch (error) {
-                console.log(ErrorEvent+error);
+                console.log(ErrorEvent + error);
                 this.showToast("Server unreachable :(\nTry again later ");
             }
+        }
+        // todo norm else
+        else {
+            alert("pukpuk srenk")
         }
         this.submit.disabled = false;
         this.submit.textContent = "Check";
@@ -173,13 +191,10 @@ class Checker {
     }
 
     initTableResults() {
-        var data = this.sessionStorage.getItem(resultsDataKey);
-
+        let data = this.sessionStorage.getItem(resultsDataKey);
         if (data === null) return;
-
         data.split(";").forEach(rowData => {
-            var row = this.resultsTable.insertRow();
-
+            let row = this.resultsTable.insertRow();
             rowData.split(",").forEach(cellData =>
                 row.insertCell().innerHTML = cellData
             )
@@ -187,8 +202,7 @@ class Checker {
     }
 
     addTableResults(rowData) {
-        var row = this.resultsTable.insertRow(0);
-
+        let row = this.resultsTable.insertRow(0);
         document.querySelectorAll('td[style="color: blue;"]').forEach(cell => cell.removeAttribute("style"));
         document.querySelectorAll('td[style="color: red;"]').forEach(cell => cell.removeAttribute("style"));
 
@@ -203,15 +217,19 @@ class Checker {
             }
         });
 
-        var lastData = this.sessionStorage.getItem(resultsDataKey);
+        let lastData = this.sessionStorage.getItem(resultsDataKey);
         this.sessionStorage.setItem(resultsDataKey, rowData.toString() + (lastData ? ";" + lastData : ""));
     }
 
     restoreFormValues() {
         // Восстановление значений полей из localStorage
-        const xValue = localStorage.getItem("x-value");
-        if (xValue) {
-            this.xSelect.value = xValue;
+        const xValuesNew = localStorage.getItem("x-value");
+        if (xValuesNew) {
+            this.xValues = JSON.parse(xValuesNew);
+
+            this.xCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.xValues.includes(checkbox.value);
+            });
         }
 
         const yValue = localStorage.getItem("y-value");
