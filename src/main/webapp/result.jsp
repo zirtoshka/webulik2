@@ -12,39 +12,42 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <link rel="stylesheet" href="assets/index.css">
+
     <title>Result Page</title>
 </head>
 <body>
 <h2>Result Page</h2>
 <% PointsStorage pointsStorage = (PointsStorage) request.getSession().getAttribute("tableContent");%>
-<table border="1">
-    <caption>Все результаты</caption>
+<table id="results-table">
+    <caption>Results</caption>
     <thead>
-    <th>x</th>
-    <th>y</th>
-    <th>R</th>
-    <th>Результат</th>
-    <th>Script time</th>
-    <th>Текущее время</th>
-    </thead>
-    <tbody>
-    <% List<Point> list = pointsStorage.getPoints(); %>
-<%--    <% list = list.stream().sorted(Comparator.comparing(Point::getTime).reversed()).collect(Collectors.toList()); %>--%>
-    <% for (Point point : list) { %>
     <tr>
-        <td><%=point.getX()%>
+        <th width="5%">X</th>
+        <th width="5%">Y</th>
+        <th width="5%">R</th>
+        <th width="40%">Current time</th>
+        <th width="25%">Script time</th>
+        <th width="20%">Result</th>
+    </tr>
+    </thead>
+    <tbody id="results-content">
+    <% List<Point> list = pointsStorage.getPoints(); %>
+    <% for (int i = list.size() - 1; i >= 0; i--) { %>
+    <tr>
+        <td><%=list.get(i).getX()%>
         </td>
-        <td><%=point.getY()%>
+        <td><%=list.get(i).getY()%>
         </td>
-        <td><%=point.getR()%>
+        <td><%=list.get(i).getR()%>
         </td>
-        <td><%= point.getIsKill() ? "kill"
+        <td><%= list.get(i).getTime() %>
+        </td>
+        <td><%= list.get(i).getScriptTime() %>
+        </td>
+        </td>
+        <td><%= list.get(i).getIsKill() ? "kill"
                 : "miss"%>
-        </td>
-        <td><%= point.getScriptTime() %>
-        </td>
-        </td>
-        <td><%= point.getTime() %>
         </td>
 
     </tr>

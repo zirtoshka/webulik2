@@ -40,7 +40,7 @@ body {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    gap: 5%;
+    /*gap: 3%;*/
 
 }
 
@@ -349,4 +349,8 @@ tbody tr:hover {
 
 [type="radio"] {
     display: none;
+}
+
+.graph-canvas {
+    border: 1px solid black;
 }

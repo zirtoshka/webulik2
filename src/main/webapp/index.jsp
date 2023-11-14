@@ -1,3 +1,6 @@
+<%@ page import="validator.PointsStorage" %>
+<%@ page import="validator.Point" %>
+<%@ page import="java.util.List" %>
 <!DOCTYPE html>
 <html>
 
@@ -20,7 +23,7 @@
 
 </div>
 <header class="header">
-<%--    <h1> Зайцева Ирина Сергеевна P3209 1993</h1>--%>
+    <%--    <h1> Зайцева Ирина Сергеевна P3209 1993</h1>--%>
     <h1> Zaitseva Irina Sergeevna P3209 1993</h1>
 </header>
 <br>
@@ -31,42 +34,42 @@
             <div class="x-input">
                 <label id="x-label">X:</label>
                 <div class="x-checkbox">
-                    <input class="x-value"  type="checkbox" id="-5" name="checkbox"  value="-5"/>
-<%--                    checked--%>
+                    <input class="x-value" type="checkbox" id="-5" name="checkbox" value="-5"/>
+                    <%--                    checked--%>
                     <label for="-5">-5</label>
                 </div>
 
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="-4" name="checkbox"  value="-4"/>
+                    <input class="x-value" type="checkbox" id="-4" name="checkbox" value="-4"/>
                     <label for="-4">-4</label>
                 </div>
 
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="-3" name="checkbox"  value="-3"/>
+                    <input class="x-value" type="checkbox" id="-3" name="checkbox" value="-3"/>
                     <label for="-3">-3</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="-2" name="checkbox"  value="-2"/>
+                    <input class="x-value" type="checkbox" id="-2" name="checkbox" value="-2"/>
                     <label for="-2">-2</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="-1" name="checkbox"  value="-1"/>
+                    <input class="x-value" type="checkbox" id="-1" name="checkbox" value="-1"/>
                     <label for="-1">-1</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="0" name="checkbox"  value="0"/>
+                    <input class="x-value" type="checkbox" id="0" name="checkbox" value="0"/>
                     <label for="0">0</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="1" name="checkbox"  value="1"/>
+                    <input class="x-value" type="checkbox" id="1" name="checkbox" value="1"/>
                     <label for="1">1</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="2" name="checkbox"  value="2"/>
+                    <input class="x-value" type="checkbox" id="2" name="checkbox" value="2"/>
                     <label for="2">2</label>
                 </div>
                 <div class="x-checkbox">
-                    <input class="x-value" type="checkbox" id="3" name="checkbox"  value="3"/>
+                    <input class="x-value" type="checkbox" id="3" name="checkbox" value="3"/>
                     <label for="3">3</label>
                 </div>
 
@@ -114,6 +117,10 @@
             </div>
 
         </form>
+        <div class="disable-button">
+            <label class="item" for="disable-video">disable video</label>
+            <input class="item" id="disable-video" type="checkbox">
+        </div>
 
 
     </div>
@@ -121,12 +128,13 @@
 
     <div class="graph">
         <h1>Graph</h1>
-<%--        <img src="assets/img.png" alt="img" width="400">--%>
-        <br>
-        <div class="disable-button">
-            <label class="item" for="disable-video">disable video</label>
-            <input class="item" id="disable-video" type="checkbox">
+
+        <div class="graph-canvas">
+            <canvas width="510" height="510" id="canvas">
+            </canvas>
         </div>
+        <br>
+
     </div>
 
 
@@ -138,12 +146,40 @@
                 <th width="5%">Y</th>
                 <th width="5%">R</th>
                 <th width="40%">Current time</th>
-                <th width="25%">Script time (ms)</th>
+                <th width="25%">Script time</th>
                 <th width="20%">Result</th>
             </tr>
             </thead>
+            <% PointsStorage pointsStorage = (PointsStorage) request.getSession().getAttribute("tableContent");
+                if (pointsStorage == null) {%>
             <tbody id="results-content">
             </tbody>
+            <% } else { %>
+
+            <tbody id="results-content">
+            <% List<Point> list = pointsStorage.getPoints(); %>
+            <% for (int i = list.size() - 1; i >= 0; i--) { %>
+            <tr>
+                <td><%=list.get(i).getX()%>
+                </td>
+                <td><%=list.get(i).getY()%>
+                </td>
+                <td><%=list.get(i).getR()%>
+                </td>
+                <td><%= list.get(i).getTime() %>
+                </td>
+                <td><%= list.get(i).getScriptTime() %>
+                </td>
+                </td>
+                <td><%= list.get(i).getIsKill() ? "kill"
+                        : "miss"%>
+                </td>
+
+            </tr>
+            <% } %>
+            </tbody>
+            <% } %>
+
         </table>
     </div>
 
@@ -151,13 +187,15 @@
 
 <div id="custom-toast" class="toast">
     <div class="toast-content">
-        <!-- Здесь вы можете разместить текст уведомления -->
-        Пример уведомления
+
     </div>
 </div>
 
 <script src="js/animations.js" type="text/javascript"></script>
-<script src="js/main.js" type="text/javascript"></script>
+<script src="js/form.js" type="module"></script>
+<script src="js/utils.js" type="module"></script>
+<script src="js/graph.js" type="module"></script>
+
 
 </body>
 

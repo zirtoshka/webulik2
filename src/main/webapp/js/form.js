@@ -1,7 +1,8 @@
 "use script";
 const resultsDataKey = "results";
-
+import {showToast}  from './utils.js';
 class Checker {
+
 
 
     constructor() {
@@ -29,7 +30,7 @@ class Checker {
 
         this.sessionStorage = window.sessionStorage;
         this.resultsTable = document.getElementById("results-content");
-        this.initTableResults();
+        // this.initTableResults();
         this.restoreFormValues();
 
 
@@ -96,17 +97,7 @@ class Checker {
         console.log(this.xValues);
     }
 
-    showToast(message) {
-        const toast = document.getElementById("custom-toast");
-        const toastContent = toast.querySelector(".toast-content");
 
-        toastContent.textContent = message;
-        toast.classList.add("show");
-
-        setTimeout(() => {
-            toast.classList.remove("show");
-        }, 3000); // Скрывать уведомление через 3 секунды
-    }
 
 
     validateAndParse(x, y, r) {
@@ -119,25 +110,26 @@ class Checker {
         let parsedX = x.map(value => parseInt(value.trim()));
 
         if (parsedX.length == 0) {
-            this.showToast("Please choose value for x. It can't be null");
+            showToast("Please choose value for x. It can't be null");
             return [null, null, null];
         }
         parsedX.forEach(value => {
             if (isNaN(value) || !xValues.includes(value)) {
-                this.showToast("Please choose correct button " + value);
+                showToast("Please choose correct button " + value);
                 return [null, null, null];
             }
         });
 
         parsedY = parseFloat(y);
-        if (isNaN(y.trim()) || isNaN(parsedY) || yMin > parsedY || parsedY > yMax) {
-            this.showToast("Please input correct Y value: [-5; 3]");
+        // console.log(/parsedY)
+        if (isNaN(y.trim()) || isNaN(parsedY) || yMin >= parsedY || parsedY >= yMax) {
+            showToast("Please input correct Y value: (-5; 3)");
             return [null, null, null];
         }
 
         parsedR = parseInt(r);
         if (isNaN(r.trim()) || isNaN(parsedR) || !rValues.includes(parsedR)) {
-            this.showToast("Choose only one checkbox" + parsedR);
+            showToast("Choose only one checkbox" + parsedR);
             return [null, null, null];
         }
 
@@ -188,17 +180,16 @@ class Checker {
                 // }
             } catch (error) {
                 console.log(ErrorEvent + error);
-                this.showToast("Server unreachable :(\nTry again later ");
+                showToast("Server unreachable :(\nTry again later ");
             }
         }
 
         this.submit.disabled = false;
         this.submit.textContent = "Check";
 
-
     }
 
-    initTableResults() {
+       initTableResults() {
         let data = this.sessionStorage.getItem(resultsDataKey);
         if (data === null) return;
         data.split(";").forEach(rowData => {
@@ -208,8 +199,7 @@ class Checker {
             )
         })
     }
-
-    addTableResults(rowData) {
+         addTableResults(rowData) {
         let row = this.resultsTable.insertRow(0);
         document.querySelectorAll('td[style="color: blue;"]').forEach(cell => cell.removeAttribute("style"));
         document.querySelectorAll('td[style="color: red;"]').forEach(cell => cell.removeAttribute("style"));
@@ -228,6 +218,7 @@ class Checker {
         let lastData = this.sessionStorage.getItem(resultsDataKey);
         this.sessionStorage.setItem(resultsDataKey, rowData.toString() + (lastData ? ";" + lastData : ""));
     }
+
 
     restoreFormValues() {
         // Восстановление значений полей из localStorage
