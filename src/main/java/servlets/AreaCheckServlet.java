@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "AreaCheck", value = "/area-check")
 public class AreaCheckServlet extends HttpServlet {
@@ -32,77 +33,67 @@ public class AreaCheckServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-//        resp.sendRedirect("https://www.google.com");
         startTime = System.currentTimeMillis();
-//        LocalDateTime start=LocalDateTime.now();
         HttpSession session = req.getSession();
+
         PrintWriter writer = resp.getWriter();
         PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
-        if (tableContent == null) tableContent = new PointsStorage();
-        List<Point> points = tableContent.getPoints();
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        JsonNode requestData = mapper.readTree(req.getReader());
-        System.out.println("jopajopa");
 
-        double x = 10;//todo: no initialization
+        if (tableContent == null) tableContent = new PointsStorage();
+
+        List<Point> points = tableContent.getPoints();
+        JsonNode requestData = mapper.readTree(req.getReader());
+        Double x = null;
+        List<Double> xValues = null;
         try {
             try {
-                x = requestData.get("x").asDouble();
+                JsonNode xNode = requestData.get("x");
+                xValues=getPointsList(xNode);
             } catch (Exception e) {
                 //todo: to do smt
                 System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
             }
-//            System.out.println(x);
             double y = requestData.get("y").asDouble();
             double r = requestData.get("r").asDouble();
             boolean isForm = requestData.get("isForm").asBoolean();
-            System.out.println(x);
-            System.out.println(y);
-            System.out.println(r);
-            System.out.println(isForm);
 
-            if (isForm){
-                req.getSession().setAttribute("x", x);
-                req.setAttribute("y", y);
-                req.setAttribute("r", r);
-                req.setAttribute("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
-                req.setAttribute("now", dataFormatter(LocalDateTime.now()));
-                req.setAttribute("script_time", System.currentTimeMillis()-startTime+" ms");
+
+            if (isForm) {
+                for (Double xV : xValues) {
+                    try {
+                        if (dataChecker.checkXYR(xV, y, r)) {
+                            Point point = new Point(xV, y, r, dataChecker.checkKill(xV, y, r),
+                                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
+                            tableContent.addPoint(point);
+                        }
+                    } catch (WrongDataException e) {
+                        //todo norm catch
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                req.setAttribute("tableContent", tableContent);
                 resp.sendRedirect("./result");
+                System.out.println("dddddddddd");
 
-////                resp.setContentType("text/html");
-////                String path = req.getContextPath() + "/result.jsp";
-////                System.out.println(path);
-//                resp.sendRedirect("https://google.com");
-//
-////                req.getServletContext().getRequestDispatcher("/webulik2/zalupa").forward(req, resp);
-//
-////                ServletContext servletContext = getServletContext();
-////                System.out.println("Before forwarding to result.jsp");
-////                System.out.println(req.getContextPath()+"/WEB-INF/result.jsp");
-//
-////                req.getRequestDispatcher("./result.jsp").forward(req, resp);
-////                System.out.println("After forwarding to result.jsp");
-//
-////                resp.getWriter().println("script_time: " + req.getAttribute("script_time"));
-////                resp.getWriter().flush();
-//
-        }else {
 
-            if (dataChecker.checkXYR(x, y, r)) {
-                Gson gson = new Gson();
-                Map<String, Object> json = new HashMap<>();
-                json.put("x", x);
-                json.put("y", y);
-                json.put("r", r);
-                json.put("result", dataChecker.checkKill(x, y, r)? "kill":"miss");
-                json.put("now", dataFormatter(LocalDateTime.now()));
-                json.put("script_time", System.currentTimeMillis()-startTime+" ms");
-                String jsonString = gson.toJson(json);
-                PrintWriter out = resp.getWriter();
-                out.print(jsonString);
-                out.flush();
-            }}
+            } else {
+
+                if (dataChecker.checkXYR(x, y, r)) {
+                    Gson gson = new Gson();
+                    Map<String, Object> json = new HashMap<>();
+                    json.put("x", x);
+                    json.put("y", y);
+                    json.put("r", r);
+                    json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
+                    json.put("now", dataFormatter(LocalDateTime.now()));
+                    json.put("script_time", System.currentTimeMillis() - startTime + " ms");
+                    String jsonString = gson.toJson(json);
+                    PrintWriter out = resp.getWriter();
+                    out.print(jsonString);
+                    out.flush();
+                }
+            }
 
 
         } catch (WrongDataException e) {
@@ -136,6 +127,16 @@ public class AreaCheckServlet extends HttpServlet {
         String formattedDateTime = localeDataTime.format(formatter);
 
         return formattedDateTime;
+    }
+
+    private List<Double> getPointsList(JsonNode xNode) {
+        List<Double> xValues = new ArrayList<>();
+
+        if (xNode.isArray()) {
+            for (JsonNode element : xNode) {
+                xValues.add(element.doubleValue());
+            }
+        } return xValues;
     }
 //    LocalDateTime currentDateTime = LocalDateTime.now();
 

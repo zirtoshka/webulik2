@@ -1,4 +1,8 @@
-<%--
+<%@ page import="validator.PointsStorage" %>
+<%@ page import="validator.Point" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.Comparator" %>
+<%@ page import="java.util.stream.Collectors" %><%--
   Created by IntelliJ IDEA.
   User: zirtoshka
   Date: 12.11.2023
@@ -12,17 +16,42 @@
 </head>
 <body>
 <h2>Result Page</h2>
+<% PointsStorage pointsStorage = (PointsStorage) request.getSession().getAttribute("tableContent");%>
 <table border="1">
+    <caption>Все результаты</caption>
+    <thead>
+    <th>x</th>
+    <th>y</th>
+    <th>R</th>
+    <th>Результат</th>
+    <th>Script time</th>
+    <th>Текущее время</th>
+    </thead>
+    <tbody>
+    <% List<Point> list = pointsStorage.getPoints(); %>
+<%--    <% list = list.stream().sorted(Comparator.comparing(Point::getTime).reversed()).collect(Collectors.toList()); %>--%>
+    <% for (Point point : list) { %>
     <tr>
-        <th>X</th>
-        <th>Y</th>
-        <th>R</th>
+        <td><%=point.getX()%>
+        </td>
+        <td><%=point.getY()%>
+        </td>
+        <td><%=point.getR()%>
+        </td>
+        <td><%= point.getIsKill() ? "kill"
+                : "miss"%>
+        </td>
+        <td><%= point.getScriptTime() %>
+        </td>
+        </td>
+        <td><%= point.getTime() %>
+        </td>
+
     </tr>
-    <tr>
-        <td><%= request.getSession().getAttribute("x")%></td>
-        <td><%= request.getAttribute("y")%></td>
-        <td><%= request.getSession().getAttribute("r")%></td>
-    </tr>
+    <% } %>
+    </tbody>
 </table>
+
+<a href="/webulik2/index.jsp" class="back_to_form">go away form</a>
 </body>
 </html>

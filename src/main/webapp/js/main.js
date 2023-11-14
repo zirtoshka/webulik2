@@ -63,6 +63,7 @@ class Checker {
         this.rRadios.forEach(radioButton => {
             radioButton.addEventListener("change", this.handleRadioChange.bind(this))
         });
+
     }
 
     setupEventListenersX() {
@@ -92,6 +93,7 @@ class Checker {
         }
         // Сохраняем обновленные значения в localStorage
         localStorage.setItem("x-value", JSON.stringify(this.xValues));
+        console.log(this.xValues);
     }
 
     showToast(message) {
@@ -111,13 +113,21 @@ class Checker {
         const xValues = [-5, -4, -3, -2, -1, 0, 1, 2, 3];
         const yMin = -5, yMax = 3;
         const rValues = [1, 2, 3, 4, 5];
-        let parsedX, parsedY, parsedR;
+        let parsedY, parsedR;
 
-        parsedX = parseInt(x);
-        if (isNaN(x.trim()) || isNaN(parsedX) || !xValues.includes(parsedX)) {
-            this.showToast("Please choose correct button" + x);
+
+        let parsedX = x.map(value => parseInt(value.trim()));
+
+        if (parsedX.length == 0) {
+            this.showToast("Please choose value for x. It can't be null");
             return [null, null, null];
         }
+        parsedX.forEach(value => {
+            if (isNaN(value) || !xValues.includes(value)) {
+                this.showToast("Please choose correct button " + value);
+                return [null, null, null];
+            }
+        });
 
         parsedY = parseFloat(y);
         if (isNaN(y.trim()) || isNaN(parsedY) || yMin > parsedY || parsedY > yMax) {
@@ -141,8 +151,9 @@ class Checker {
         this.submit.disabled = true;
         let isForm = true;
 
-        const [x, y, r] = this.validateAndParse(this.xCheckboxes.values, this.yInput.value, this.rValue);
-        if (x !== null && y !== null && r !== null) {
+        const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
+
+        if (x !==null && y !== null && r !== null) {
             try {
                 const response = await fetch("app", {
                     method: "POST",
@@ -180,10 +191,7 @@ class Checker {
                 this.showToast("Server unreachable :(\nTry again later ");
             }
         }
-        // todo norm else
-        else {
-            alert("pukpuk srenk")
-        }
+
         this.submit.disabled = false;
         this.submit.textContent = "Check";
 
