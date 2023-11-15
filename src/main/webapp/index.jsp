@@ -130,7 +130,7 @@
         <h1>Graph</h1>
 
         <div class="graph-canvas">
-            <canvas width="510" height="510" id="canvas">
+            <canvas width="510" height="510" id="coordinateCanvas">
             </canvas>
         </div>
         <br>
