@@ -1,8 +1,11 @@
 "use script";
-const resultsDataKey = "results";
-import {showToast}  from './utils.js';
-class Checker {
 
+
+const resultsDataKey = "results";
+import {showToast} from './utils.js';
+import {drawGraph} from "./graph.js";
+
+export class Checker {
 
 
     constructor() {
@@ -77,6 +80,8 @@ class Checker {
     handleRadioChange(event) {
         this.rValue = event.target.value;
         localStorage.setItem("r-value", this.rValue);
+        drawGraph();
+        console.log(this.rValue);
     }
 
     handleCheckboxChange(event) {
@@ -96,8 +101,6 @@ class Checker {
         localStorage.setItem("x-value", JSON.stringify(this.xValues));
         console.log(this.xValues);
     }
-
-
 
 
     validateAndParse(x, y, r) {
@@ -145,7 +148,7 @@ class Checker {
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
-        if (x !==null && y !== null && r !== null) {
+        if (x !== null && y !== null && r !== null) {
             try {
                 const response = await fetch("app", {
                     method: "POST",
@@ -189,7 +192,7 @@ class Checker {
 
     }
 
-       initTableResults() {
+    initTableResults() {
         let data = this.sessionStorage.getItem(resultsDataKey);
         if (data === null) return;
         data.split(";").forEach(rowData => {
@@ -199,7 +202,8 @@ class Checker {
             )
         })
     }
-         addTableResults(rowData) {
+
+    addTableResults(rowData) {
         let row = this.resultsTable.insertRow(0);
         document.querySelectorAll('td[style="color: blue;"]').forEach(cell => cell.removeAttribute("style"));
         document.querySelectorAll('td[style="color: red;"]').forEach(cell => cell.removeAttribute("style"));
@@ -249,4 +253,4 @@ class Checker {
 
 }
 
-const check = new Checker();
+export var check = new Checker();

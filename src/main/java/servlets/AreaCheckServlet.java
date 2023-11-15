@@ -48,7 +48,7 @@ public class AreaCheckServlet extends HttpServlet {
         try {
             try {
                 JsonNode xNode = requestData.get("x");
-                xValues=getPointsList(xNode);
+                xValues = getPointsList(xNode);
             } catch (Exception e) {
                 //todo: to do smt
                 System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
@@ -62,9 +62,7 @@ public class AreaCheckServlet extends HttpServlet {
                 for (Double xV : xValues) {
                     try {
                         if (dataChecker.checkXYR(xV, y, r)) {
-                            Point point = new Point(xV, y, r, dataChecker.checkKill(xV, y, r),
-                                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
-                            tableContent.addPoint(point);
+                            addToTableContent(xV,y,r,tableContent,req);
                         }
                     } catch (WrongDataException e) {
                         //todo norm catch
@@ -72,40 +70,63 @@ public class AreaCheckServlet extends HttpServlet {
                     }
 
                 }
-                req.setAttribute("tableContent", tableContent);
+//                req.setAttribute("tableContent", tableContent);
                 resp.sendRedirect("./result");
                 System.out.println("dddddddddd");
 
 
             } else {
+                x = requestData.get("x").asDouble();
 
                 if (dataChecker.checkXYR(x, y, r)) {
+
                     Gson gson = new Gson();
                     Map<String, Object> json = new HashMap<>();
                     json.put("x", x);
                     json.put("y", y);
                     json.put("r", r);
                     json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
-                    json.put("now", dataFormatter(LocalDateTime.now()));
+                    json.put("nowTime", dataFormatter(LocalDateTime.now()));
                     json.put("script_time", System.currentTimeMillis() - startTime + " ms");
                     String jsonString = gson.toJson(json);
-                    PrintWriter out = resp.getWriter();
-                    out.print(jsonString);
-                    out.flush();
+                    System.out.println(jsonString);
+
+//                    PrintWriter out = resp.getWriter();
+//                    out.print(jsonString);
+//                    out.flush();
+                    resp.setContentType("application/json");
+                    System.out.println(jsonString);
+                    resp.getWriter().write(jsonString);
+
+//
+//                    req.setAttribute("tableContent", tableContent);
+                    System.out.println("ffff");
+
+
                 }
             }
 
-
+        if(isForm && dataChecker.checkXYR(x, y, r)){
+            addToTableContent(x,y,r,tableContent, req);
+        }
         } catch (WrongDataException e) {
             //todo
             System.out.println("eblanerror");
         }
+
         System.out.println("ebobo");
         if (points.size() > 0) {
             writer.println(convertToJSON(points));
         }
         writer.close();
         session.setAttribute("tableContent", tableContent);
+
+    }
+    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req){
+        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
+                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
+        tableContent.addPoint(point);
+        req.setAttribute("tableContent", tableContent);
 
     }
 

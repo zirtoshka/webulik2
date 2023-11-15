@@ -18,6 +18,7 @@
 </head>
 <body>
 <h2>Result Page</h2>
+<a href="/webulik2/index.jsp" class="back_to_form">go away form</a>
 <% PointsStorage pointsStorage = (PointsStorage) request.getSession().getAttribute("tableContent");%>
 <table id="results-table">
     <caption>Results</caption>
@@ -55,6 +56,6 @@
     </tbody>
 </table>
 
-<a href="/webulik2/index.jsp" class="back_to_form">go away form</a>
+
 </body>
 </html>

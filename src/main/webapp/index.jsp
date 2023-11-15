@@ -24,7 +24,7 @@
 </div>
 <header class="header">
     <%--    <h1> Зайцева Ирина Сергеевна P3209 1993</h1>--%>
-    <h1> Zaitseva Irina Sergeevna P3209 1993</h1>
+    <h1> Zaitseva Irina Sergeevna P3209 90838</h1>
 </header>
 <br>
 <div class="container">
@@ -130,7 +130,7 @@
         <h1>Graph</h1>
 
         <div class="graph-canvas">
-            <canvas width="510" height="510" id="coordinateCanvas">
+            <canvas width="517" height="520" id="coordinateCanvas">
             </canvas>
         </div>
         <br>

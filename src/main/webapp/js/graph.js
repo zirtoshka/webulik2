@@ -1,30 +1,89 @@
-
-
 import { showToast} from './utils.js';
-
+import {check} from './form.js';
 document.addEventListener('DOMContentLoaded', drawGraph);
 const canvas = document.getElementById('coordinateCanvas');
-var x,y,rValue=2;
-var rRadios = document.getElementsByName("radio");
+var x,y;
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const pxR=50;
 
 canvas.addEventListener('click', function (event){
-    if(rValue == null) showToast("Невозможно определить координаты, выберите сначала значение радиуса")
+    if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
     else {
+        console.log("jopa");
         let loc = windowToCanvas(canvas, event.clientX, event.clientY);
         let x = xFromCanvas(loc.x);
         let y = yFromCanvas(loc.y);
-        sendToServer(x, y, r);
+        console.log(x);
+        console.log(y);
+        sendToServer(x, y, check.rValue);
     }
 });
 
-function drawGraph() {
+async function sendToServer(x,y,r) {
+    let isForm = false;
+    console.log(x+"ddd"+y+"ff"+r);
+    if (x !== null && y !== null && r !== null) {
+        try {
+            const response = await fetch("app", {
+                method: "POST",
+                mode: "no-cors",
+                redirect: "follow",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({x, y, r, isForm})
+            });
+            console.log(1);
+            const json = await response.json();
+            // console.log(response.status);
+            if (response.status === 200) {
+                console.log(2);
+                if (!document.getElementById("disable-video").checked) {
+                    let isKill = false;
+                    if (json.result === "kill") {
+                        isKill = true;
+                    }
+                    await check.animations.shoot(x, y, r, isKill);
+                }
+
+                console.log(3);
+                var data = [x, y, r, json.result, json.nowTime, json.script_time];
+                console.log("lolik");
+                console.log(data);
+                check.addTableResults(data);
+
+            } else {
+                check.showToast("Server error: " + json.message);
+            }
+        } catch (error) {
+            console.log(ErrorEvent + error);
+            showToast("Server unreachable :(\nTry again later ");
+        }
+    }
+
+}
+function xFromCanvas(x){
+    return (x - centerX)/pxR;
+}
+function yFromCanvas(y){
+    return (centerY - y)/pxR;
+}
+
+function windowToCanvas(canvas, x, y){
+    let bbox = canvas.getBoundingClientRect();
+    return {x: x -bbox.left * (canvas.width / bbox.width),
+        y: y - bbox.top * (canvas.height / bbox.height)
+    };}
+
+
+ export function   drawGraph() {
     // const canvas = document.getElementById('coordinateCanvas');
     const ctx = canvas.getContext('2d');
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    console.log(centerX + 'ffff'+ centerY);
+    // const centerX = canvas.width / 2;
+    // const centerY = canvas.height / 2;
     const axisLength = 500;
-    const r = 50*rValue; // Установите ваше значение r здесь
+    const r = pxR*check.rValue; // Установите ваше значение r здесь
 
     // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -50,9 +109,10 @@ function drawGraph() {
     drawAxisLabel(ctx, '- R/2', centerX-r/2, centerY-5);
     drawAxisLabel(ctx, '- R', centerX+5, centerY+r);
     drawAxisLabel(ctx, '- R/2', centerX+5, centerY+r/2);
+
 }
 
-function drawArrow(context, fromX, fromY, toX, toY) {
+ function drawArrow(context, fromX, fromY, toX, toY) {
     context.beginPath();
     context.moveTo(fromX, fromY);
     context.lineTo(toX, toY);
@@ -67,7 +127,7 @@ function drawArrow(context, fromX, fromY, toX, toY) {
     context.stroke();
 }
 
-function drawTicks(context, centerX, centerY, length, axis) {
+ function drawTicks(context, centerX, centerY, length, axis) {
     const numTicks = 11;
     const tickSpacing = length / (numTicks - 1);
     const tickSize = 5;
@@ -86,14 +146,14 @@ function drawTicks(context, centerX, centerY, length, axis) {
     context.stroke();
 }
 
-function drawAxisLabel(context, label, x, y) {
+ function drawAxisLabel(context, label, x, y) {
     context.fillStyle = 'rgba(0, 0, 0, 1)'; // Цвет и прозрачность заливки
 
     context.font = '14px Arial';
     context.fillText(label, x, y);
 }
 
-function shadeRegion(context, centerX, centerY, r) {
+ function shadeRegion(context, centerX, centerY, r) {
     context.fillStyle = 'rgba(255, 0, 255, 1)'; // Цвет и прозрачность заливки
 
     //part of circle
