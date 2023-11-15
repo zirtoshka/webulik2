@@ -85,9 +85,9 @@ public class AreaCheckServlet extends HttpServlet {
                     json.put("x", x);
                     json.put("y", y);
                     json.put("r", r);
-                    json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
                     json.put("nowTime", dataFormatter(LocalDateTime.now()));
                     json.put("script_time", System.currentTimeMillis() - startTime + " ms");
+                    json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
                     String jsonString = gson.toJson(json);
                     System.out.println(jsonString);
 
@@ -113,21 +113,19 @@ public class AreaCheckServlet extends HttpServlet {
         }
 
         System.out.println("ebobo");
-        if (points.size() > 0) {
-            writer.println(convertToJSON(points));
-        }
+//        if (points.size() > 0) {
+//            writer.println(convertToJSON(points));
+//        }
         writer.close();
         session.setAttribute("tableContent", tableContent);
 
     }
 
     private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req){
-//        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
-//                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
-//        tableContent.addPoint(point);
-        tableContent.addPoint(new Point(x,y,r,dataChecker.checkKill(x,y,r),
-                System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now())));
-        //req.setAttribute("tableContent", tableContent);
+        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
+                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
+        tableContent.addPoint(point);
+
     }
 
     private String convertToJSON(List<Point> points) {

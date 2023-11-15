@@ -48,7 +48,7 @@ async function sendToServer(x,y,r) {
                 }
 
                 console.log(3);
-                var data = [x, y, r, json.result, json.nowTime, json.script_time];
+                var data = [x, y, r,  json.nowTime, json.script_time,json.result];
                 console.log("lolik");
                 console.log(data);
                 check.addTableResults(data);
