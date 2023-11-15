@@ -98,15 +98,13 @@ public class AreaCheckServlet extends HttpServlet {
                     System.out.println(jsonString);
                     resp.getWriter().write(jsonString);
 
-//
+                    //addToTableContent(x, y, r, tableContent, req);
 //                    req.setAttribute("tableContent", tableContent);
                     System.out.println("ffff");
-
-
                 }
             }
 
-        if(isForm && dataChecker.checkXYR(x, y, r)){
+        if(!isForm && dataChecker.checkXYR(x, y, r)){
             addToTableContent(x,y,r,tableContent, req);
         }
         } catch (WrongDataException e) {
@@ -122,12 +120,14 @@ public class AreaCheckServlet extends HttpServlet {
         session.setAttribute("tableContent", tableContent);
 
     }
-    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req){
-        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
-                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
-        tableContent.addPoint(point);
-        req.setAttribute("tableContent", tableContent);
 
+    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req){
+//        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
+//                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
+//        tableContent.addPoint(point);
+        tableContent.addPoint(new Point(x,y,r,dataChecker.checkKill(x,y,r),
+                System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now())));
+        //req.setAttribute("tableContent", tableContent);
     }
 
     private String convertToJSON(List<Point> points) {
