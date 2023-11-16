@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/index.css">
     <title>puk labuk2</title>
+
 </head>
 
 <body>

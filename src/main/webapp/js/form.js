@@ -33,7 +33,6 @@ export class Checker {
 
         this.sessionStorage = window.sessionStorage;
         this.resultsTable = document.getElementById("results-content");
-        // this.initTableResults();
         this.restoreFormValues();
 
 
@@ -192,16 +191,6 @@ export class Checker {
 
     }
 
-    initTableResults() {
-        let data = this.sessionStorage.getItem(resultsDataKey);
-        if (data === null) return;
-        data.split(";").forEach(rowData => {
-            let row = this.resultsTable.insertRow();
-            rowData.split(",").forEach(cellData =>
-                row.insertCell().innerHTML = cellData
-            )
-        })
-    }
 
     addTableResults(rowData) {
         let row = this.resultsTable.insertRow(0);

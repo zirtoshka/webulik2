@@ -77,8 +77,10 @@ public class AreaCheckServlet extends HttpServlet {
 
             } else {
                 x = requestData.get("x").asDouble();
+                //todo norm if
 
-                if (dataChecker.checkXYR(x, y, r)) {
+//                if (dataChecker.checkXYR(x, y, r)) {
+                if (-5.5<=x&& x<=5.5&& -5.5<=y&& y<=5.5&& 1<=r&& r<=5  ) {
 
                     Gson gson = new Gson();
                     Map<String, Object> json = new HashMap<>();

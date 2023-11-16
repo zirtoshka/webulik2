@@ -1,28 +1,69 @@
 import { showToast} from './utils.js';
 import {check} from './form.js';
-document.addEventListener('DOMContentLoaded', drawGraph);
+// document.addEventListener('DOMContentLoaded', drawGraph);
+document.addEventListener('DOMContentLoaded', function () {
+    drawGraph();
+    const storedPoints = sessionStorage.getItem('points');
+    if (storedPoints) {
+        points = JSON.parse(storedPoints);
+        drawPointsFromJson(storedPoints);
+    }
+    canvas.addEventListener('click', function (event){
+        if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
+        else {
+            let loc = windowToCanvas(canvas, event.clientX, event.clientY);
+            let x = xFromCanvas(loc.x);
+            let y = yFromCanvas(loc.y);
+            const newPoint = { x: x, y: y };
+            points.push(newPoint); // Добавление новой точки в массив
+
+            drawPoint(x, y);
+
+            // Сохранение обновленных точек в sessionStorage
+            sessionStorage.setItem('points', JSON.stringify(points));
+            sendToServer(x, y, check.rValue).then(r => console.log(r));
+
+        }
+    });
+
+
+});
+function drawPointsFromJson(jsonPoints) {
+    const parsedPoints = JSON.parse(jsonPoints);
+    for (const point of parsedPoints) {
+        drawPoint(point.x, point.y);
+    }
+}
+
+
+
 const canvas = document.getElementById('coordinateCanvas');
 var x,y;
 const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const pxR=50;
+const ctx = canvas.getContext('2d');
+let points = []; // Инициализация массива точек
 
-canvas.addEventListener('click', function (event){
-    if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
-    else {
-        console.log("jopa");
-        let loc = windowToCanvas(canvas, event.clientX, event.clientY);
-        let x = xFromCanvas(loc.x);
-        let y = yFromCanvas(loc.y);
-        console.log(x);
-        console.log(y);
-        sendToServer(x, y, check.rValue);
-    }
-});
+
+
+// canvas.addEventListener('click', function (event){
+//     if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
+//     else {
+//         let loc = windowToCanvas(canvas, event.clientX, event.clientY);
+//         let x = xFromCanvas(loc.x);
+//         let y = yFromCanvas(loc.y);
+//         console.log(x);
+//         console.log(y);
+//         drawPoint(x,y);
+//         sendToServer(x, y, check.rValue);
+//         sessionStorage.setItem('points', JSON.stringify(updatedPoints));
+//
+//     }
+// });
 
 async function sendToServer(x,y,r) {
     let isForm = false;
-    console.log(x+"ddd"+y+"ff"+r);
     if (x !== null && y !== null && r !== null) {
         try {
             const response = await fetch("app", {
@@ -36,7 +77,6 @@ async function sendToServer(x,y,r) {
             });
             console.log(1);
             const json = await response.json();
-            // console.log(response.status);
             if (response.status === 200) {
                 console.log(2);
                 if (!document.getElementById("disable-video").checked) {
@@ -69,6 +109,12 @@ function xFromCanvas(x){
 function yFromCanvas(y){
     return (centerY - y)/pxR;
 }
+function xToCanvas(x){
+    return (x * pxR) + centerX;
+}
+function yToCanvas(y){
+    return centerY - (y * pxR);
+}
 
 function windowToCanvas(canvas, x, y){
     let bbox = canvas.getBoundingClientRect();
@@ -79,7 +125,6 @@ function windowToCanvas(canvas, x, y){
 
  export function   drawGraph() {
     // const canvas = document.getElementById('coordinateCanvas');
-    const ctx = canvas.getContext('2d');
     // const centerX = canvas.width / 2;
     // const centerY = canvas.height / 2;
     const axisLength = 500;
@@ -112,7 +157,15 @@ function windowToCanvas(canvas, x, y){
 
 }
 
- function drawArrow(context, fromX, fromY, toX, toY) {
+function drawPoint(x, y){
+    x = xToCanvas(x);
+    y = yToCanvas(y);
+    ctx.fillStyle = 'rgb(17,3,3)';
+    ctx.fillRect(x, y, 3, 3);
+    ctx.fillStyle = 'rgba(245,87,245,0.73)';
+
+}
+ export function drawArrow(context, fromX, fromY, toX, toY) {
     context.beginPath();
     context.moveTo(fromX, fromY);
     context.lineTo(toX, toY);
