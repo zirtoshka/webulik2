@@ -78,7 +78,7 @@ function clearTable(){
 }
 function doRequestToClear(){
     let action="clear";
-    fetch('app', {
+    fetch('clear', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -92,7 +92,6 @@ function doRequestToClear(){
 
 async function sendToServer(x,y,r) {
     let isForm = false;
-    let action = "make";
     if (x !== null && y !== null && r !== null) {
         try {
             // console.log(JSON.stringify({action,x, y, r, isForm}));
@@ -103,7 +102,7 @@ async function sendToServer(x,y,r) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ action,x, y, r, isForm})
+                body: JSON.stringify({ x, y, r, isForm})
             });
 console.log(5);
             const json = await response.json();

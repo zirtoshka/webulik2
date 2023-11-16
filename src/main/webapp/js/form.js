@@ -148,7 +148,6 @@ export class Checker {
         this.submit.textContent = "Checking...";
         this.submit.disabled = true;
         let isForm = true;
-        let action ="make";
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
@@ -161,7 +160,7 @@ export class Checker {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({action,x, y, r, isForm})
+                    body: JSON.stringify({x, y, r, isForm})
                 }).then(response => {
                     if (response.redirected) {
                         window.location.href = response.url;

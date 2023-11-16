@@ -10,33 +10,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Controller", value="/app")
+@WebServlet(name = "Controller", value = "/app")
 public class ControllerServlet extends HttpServlet {
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Access-Control-Allow-Origin", "*");
-        JsonNode requestData = mapper.readTree(req.getReader());
-        String action = requestData.get("action").asText();
 
-//        String action = req.getParameter("action");
-        System.out.println("action: "+action);
+        getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
 
-        if (action==null) {
-
-//            System.out.println(action);
-            System.out.println("its clear");
-            getServletContext().getRequestDispatcher("/clear").forward(req,resp );
-        }else{
-            System.out.println("its not clear");
-            getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
-        }
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+        getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
     }
+
     @Override
     public String getServletInfo() {
         return "servlet.ControllerServlet - defines the type of request, " +
