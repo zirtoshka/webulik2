@@ -3,11 +3,17 @@ import {check} from './form.js';
 // document.addEventListener('DOMContentLoaded', drawGraph);
 document.addEventListener('DOMContentLoaded', function () {
     drawGraph();
-    const storedPoints = sessionStorage.getItem('points');
+     const storedPoints = sessionStorage.getItem('points');
     if (storedPoints) {
         points = JSON.parse(storedPoints);
         drawPointsFromJson(storedPoints);
     }
+    const cleanTable = document.getElementById("clean-table");
+    cleanTable.addEventListener('click', clearTable);
+
+
+
+
     canvas.addEventListener('click', function (event){
         if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
         else {
@@ -28,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
-function drawPointsFromJson(jsonPoints) {
+export function drawPointsFromJson(jsonPoints) {
     const parsedPoints = JSON.parse(jsonPoints);
     for (const point of parsedPoints) {
         drawPoint(point.x, point.y);
@@ -47,25 +53,49 @@ let points = []; // Инициализация массива точек
 
 
 
-// canvas.addEventListener('click', function (event){
-//     if(check.rValue == null) showToast("Can't find coordinates, please choose value for r")
-//     else {
-//         let loc = windowToCanvas(canvas, event.clientX, event.clientY);
-//         let x = xFromCanvas(loc.x);
-//         let y = yFromCanvas(loc.y);
-//         console.log(x);
-//         console.log(y);
-//         drawPoint(x,y);
-//         sendToServer(x, y, check.rValue);
-//         sessionStorage.setItem('points', JSON.stringify(updatedPoints));
-//
-//     }
-// });
+function clearTable(){
+    // if (document.getElementById("clean-table").checked) {
+        // Если отмечен, очищаем массив точек и sessionStorage
+        points = [];
+        sessionStorage.setItem('points', '');
+
+        // Очищаем холст
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Заново рисуем граф
+        drawGraph();
+    let table = document.getElementById("results-table");
+
+    // Получаем количество строк в таблице
+    let rowCount = table.rows.length;
+
+    // Удаляем строки, начиная с конца
+    for (let i = rowCount - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+    doRequestToClear();
+
+}
+function doRequestToClear(){
+    let action="clear";
+    fetch('app', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({action})
+    })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
 
 async function sendToServer(x,y,r) {
     let isForm = false;
+    let action = "make";
     if (x !== null && y !== null && r !== null) {
         try {
+            // console.log(JSON.stringify({action,x, y, r, isForm}));
             const response = await fetch("app", {
                 method: "POST",
                 mode: "no-cors",
@@ -73,10 +103,11 @@ async function sendToServer(x,y,r) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({x, y, r, isForm})
+                body: JSON.stringify({ action,x, y, r, isForm})
             });
-            console.log(1);
+console.log(5);
             const json = await response.json();
+            console.log(7);
             if (response.status === 200) {
                 console.log(2);
                 if (!document.getElementById("disable-video").checked) {

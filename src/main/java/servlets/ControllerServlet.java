@@ -1,5 +1,8 @@
 package servlets;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,10 +12,26 @@ import java.io.IOException;
 
 @WebServlet(name = "Controller", value="/app")
 public class ControllerServlet extends HttpServlet {
+    ObjectMapper mapper = new ObjectMapper();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Access-Control-Allow-Origin", "*");
-        getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+        JsonNode requestData = mapper.readTree(req.getReader());
+        String action = requestData.get("action").asText();
+
+//        String action = req.getParameter("action");
+        System.out.println("action: "+action);
+
+        if (action==null) {
+
+//            System.out.println(action);
+            System.out.println("its clear");
+            getServletContext().getRequestDispatcher("/clear").forward(req,resp );
+        }else{
+            System.out.println("its not clear");
+            getServletContext().getRequestDispatcher("/area-check").forward(req,resp );
+        }
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

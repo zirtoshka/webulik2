@@ -38,14 +38,17 @@ public class AreaCheckServlet extends HttpServlet {
 
         PrintWriter writer = resp.getWriter();
         PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
-
         if (tableContent == null) tableContent = new PointsStorage();
 
         List<Point> points = tableContent.getPoints();
+        System.out.println("xy9ka");
         JsonNode requestData = mapper.readTree(req.getReader());
+        System.out.println("sosalo"+ requestData.toString());
         Double x = null;
         List<Double> xValues = null;
+
         try {
+            System.out.println("otosixyu");
             try {
                 JsonNode xNode = requestData.get("x");
                 xValues = getPointsList(xNode);
@@ -72,7 +75,7 @@ public class AreaCheckServlet extends HttpServlet {
                 }
 //                req.setAttribute("tableContent", tableContent);
                 resp.sendRedirect("./result");
-                System.out.println("dddddddddd");
+                System.out.println("ddddddddddolbeb");
 
 
             } else {
@@ -159,7 +162,7 @@ public class AreaCheckServlet extends HttpServlet {
             }
         } return xValues;
     }
-//    LocalDateTime currentDateTime = LocalDateTime.now();
+
 
 
 }

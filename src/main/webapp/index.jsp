@@ -122,6 +122,10 @@
             <label class="item" for="disable-video">disable video</label>
             <input class="item" id="disable-video" type="checkbox">
         </div>
+        <div class="clean-button">
+            <label class="item" for="clean-table">clean table</label>
+            <input class="item" id="clean-table" type="button">
+        </div>
 
 
     </div>

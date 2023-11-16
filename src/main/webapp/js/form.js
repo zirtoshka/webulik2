@@ -3,7 +3,7 @@
 
 const resultsDataKey = "results";
 import {showToast} from './utils.js';
-import {drawGraph} from "./graph.js";
+import {drawGraph, drawPointsFromJson} from "./graph.js";
 
 export class Checker {
 
@@ -80,6 +80,10 @@ export class Checker {
         this.rValue = event.target.value;
         localStorage.setItem("r-value", this.rValue);
         drawGraph();
+        const storedPoints = sessionStorage.getItem('points');
+        if (storedPoints) {
+            drawPointsFromJson(storedPoints);
+        }
         console.log(this.rValue);
     }
 
@@ -144,6 +148,7 @@ export class Checker {
         this.submit.textContent = "Checking...";
         this.submit.disabled = true;
         let isForm = true;
+        let action ="make";
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
@@ -156,7 +161,7 @@ export class Checker {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({x, y, r, isForm})
+                    body: JSON.stringify({action,x, y, r, isForm})
                 }).then(response => {
                     if (response.redirected) {
                         window.location.href = response.url;

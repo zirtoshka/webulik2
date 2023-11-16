@@ -47,7 +47,7 @@ body {
 .input {
     /*font-size: 170%;*/
     display: flex;
-    gap: 5%;
+    gap: 20px;
     flex-direction: column;
 }
 
