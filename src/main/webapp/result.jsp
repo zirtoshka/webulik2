@@ -15,21 +15,32 @@
     <link rel="stylesheet" href="assets/index.css">
 
     <title>Result Page</title>
+    <style>
+        #results-table {
+            width: 100%
+        }
+        a{
+            font-size: larger;
+        }
+
+        a:hover { color: green; }
+        a:active { color: #8c00ff; }
+    </style>
 </head>
 <body>
-<h2>Result Page</h2>
 <a href="/webulik2/index.jsp" class="back_to_form">go away form</a>
 <% PointsStorage pointsStorage = (PointsStorage) request.getSession().getAttribute("tableContent");%>
+<br>
+<br>
 <table id="results-table">
-    <caption>Results</caption>
     <thead>
     <tr>
-        <th width="5%">X</th>
-        <th width="5%">Y</th>
-        <th width="5%">R</th>
-        <th width="40%">Current time</th>
-        <th width="25%">Script time</th>
-        <th width="20%">Result</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>R</th>
+        <th>Current time</th>
+        <th>Script time</th>
+        <th>Result</th>
     </tr>
     </thead>
     <tbody id="results-content">
