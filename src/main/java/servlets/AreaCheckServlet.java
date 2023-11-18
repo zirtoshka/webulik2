@@ -9,7 +9,6 @@ import validator.DataChecker;
 import validator.Point;
 import validator.PointsStorage;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,7 +20,6 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @WebServlet(name = "AreaCheck", value = "/area-check")
 public class AreaCheckServlet extends HttpServlet {
@@ -30,6 +28,10 @@ public class AreaCheckServlet extends HttpServlet {
     DataChecker dataChecker = new DataChecker();
     ObjectMapper mapper = new ObjectMapper();
 
+    private PointsStorage getTableContent(HttpSession session) {
+        return (session.getAttribute("tableContent") == null) ? new PointsStorage() : (PointsStorage) session.getAttribute("tableContent");
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -37,114 +39,84 @@ public class AreaCheckServlet extends HttpServlet {
         HttpSession session = req.getSession();
 
         PrintWriter writer = resp.getWriter();
-        PointsStorage tableContent = (PointsStorage) session.getAttribute("tableContent");
-        if (tableContent == null) tableContent = new PointsStorage();
+        PointsStorage tableContent = getTableContent(session);
+
 
         List<Point> points = tableContent.getPoints();
-        System.out.println("xy9ka");
         JsonNode requestData = mapper.readTree(req.getReader());
-        System.out.println("sosalo"+ requestData.toString());
         Double x = null;
         List<Double> xValues = null;
+        Double y = null;
+        Double r = null;
+        Boolean isForm = null;
 
         try {
-            System.out.println("otosixyu");
-            try {
-                JsonNode xNode = requestData.get("x");
-                xValues = getPointsList(xNode);
-            } catch (Exception e) {
-                //todo: to do smt
-                System.out.println("fdjgkjdfgjkdgkjdgkjdgkjdgkjdgjkdgjkdgjkdfgkjdf");
-            }
-            double y = requestData.get("y").asDouble();
-            double r = requestData.get("r").asDouble();
-            boolean isForm = requestData.get("isForm").asBoolean();
+            JsonNode xNode = requestData.get("x");
+            xValues = getPointsList(xNode);
+            y = requestData.get("y").asDouble();
+             r = requestData.get("r").asDouble();
+             isForm = requestData.get("isForm").asBoolean();
+        } catch (Exception e) {
+            resp.sendRedirect("./badRequest");
+        }
 
 
-            if (isForm) {
-                for (Double xV : xValues) {
-                    try {
-                        if (dataChecker.checkXYR(xV, y, r)) {
-                            addToTableContent(xV,y,r,tableContent,req);
-                        }
-                    } catch (WrongDataException e) {
-                        //todo norm catch
-                        throw new RuntimeException(e);
+
+        if (isForm == null) {
+            resp.sendRedirect("./badRequest");
+        }if(isForm){
+            for (Double xV : xValues) {
+                try {
+                    if (dataChecker.checkXYR(xV, y, r)) {
+                        addToTableContent(xV, y, r, tableContent, req);
                     }
-
+                } catch (WrongDataException e) {
+                    resp.sendRedirect("./badRequest");
                 }
-//                req.setAttribute("tableContent", tableContent);
-                resp.sendRedirect("./result");
-                System.out.println("ddddddddddolbeb");
 
-
-            } else {
-                x = requestData.get("x").asDouble();
-                //todo norm if
-
-//                if (dataChecker.checkXYR(x, y, r)) {
-                if (-5.5<=x&& x<=5.5&& -5.5<=y&& y<=5.5&& 1<=r&& r<=5  ) {
-
-                    Gson gson = new Gson();
-                    Map<String, Object> json = new HashMap<>();
-                    json.put("x", x);
-                    json.put("y", y);
-                    json.put("r", r);
-                    json.put("nowTime", dataFormatter(LocalDateTime.now()));
-                    json.put("script_time", System.currentTimeMillis() - startTime + " ms");
-                    json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
-                    String jsonString = gson.toJson(json);
-                    System.out.println(jsonString);
-
-//                    PrintWriter out = resp.getWriter();
-//                    out.print(jsonString);
-//                    out.flush();
-                    resp.setContentType("application/json");
-                    System.out.println(jsonString);
-                    resp.getWriter().write(jsonString);
-
-                    //addToTableContent(x, y, r, tableContent, req);
-//                    req.setAttribute("tableContent", tableContent);
-                    System.out.println("ffff");
-                }
             }
+            resp.sendRedirect("./result");
 
-        if(!isForm && dataChecker.checkXYR(x, y, r)){
-            addToTableContent(x,y,r,tableContent, req);
-        }
-        } catch (WrongDataException e) {
-            //todo
-            System.out.println("eblanerror");
+
+
+        } else {
+            x = requestData.get("x").asDouble();
+
+            if (dataChecker.checkAreaForGraph(x,y,r)) {
+
+                Gson gson = new Gson();
+                Map<String, Object> json = new HashMap<>();
+                json.put("x", x);
+                json.put("y", y);
+                json.put("r", r);
+                json.put("nowTime", dataFormatter(LocalDateTime.now()));
+                json.put("script_time", System.currentTimeMillis() - startTime + " ms");
+                json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
+                String jsonString = gson.toJson(json);
+
+                resp.setContentType("application/json");
+                resp.getWriter().write(jsonString);
+
+                addToTableContent(x, y, r, tableContent, req);
+            }
         }
 
-        System.out.println("ebobo");
-//        if (points.size() > 0) {
-//            writer.println(convertToJSON(points));
-//        }
+
         writer.close();
         session.setAttribute("tableContent", tableContent);
 
     }
 
-    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req){
-        Point point = new Point(x,y,r,dataChecker.checkKill(x,y,r),
-                    System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
+
+
+
+    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req) {
+        Point point = new Point(x, y, r, dataChecker.checkKill(x, y, r),
+                System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
         tableContent.addPoint(point);
 
     }
 
-    private String convertToJSON(List<Point> points) {
-        if (points.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder output = new StringBuilder("[");
-        for (Point point : points) {
-            output.append(point.toString()).append(",\n");
-        }
-        output.delete(output.length() - 2, output.length()); // Delete the last comma and the line feed
-        output.append("]");
-        return output.toString();
-    }
 
     private String dataFormatter(LocalDateTime localeDataTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -160,9 +132,9 @@ public class AreaCheckServlet extends HttpServlet {
             for (JsonNode element : xNode) {
                 xValues.add(element.doubleValue());
             }
-        } return xValues;
+        }
+        return xValues;
     }
-
 
 
 }

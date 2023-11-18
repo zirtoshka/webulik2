@@ -17,7 +17,6 @@ public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Access-Control-Allow-Origin", "*");
-
         getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
 
     }

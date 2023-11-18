@@ -12,9 +12,6 @@ public class ClearTableServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-        System.out.println("dddddddddddd");
-
-// Удаляем атрибут "tableContent" из сессии
         session.removeAttribute("tableContent");
     }
 }

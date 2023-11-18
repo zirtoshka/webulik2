@@ -13,8 +13,8 @@ public class DataChecker {
     final static double yMax = 3;
     final static double rMin = 1;
     final static double rMax = 5;
+    final static double graphBoundary = 5.5;
 
-    //todo: select -> checkbox
     public boolean checkXYR(double x, double y, double r) throws WrongDataException {
         if (checkX(x)) {
             throw new WrongDataException("x = " + x + " is invalid value");
@@ -41,5 +41,9 @@ public class DataChecker {
         return ((x <= 0) && (x >= -r) && (y >= 0) && (y <= r / 2))
                 || ((x <= 0) && (x >= -r / 2) && (y <= 0) && (y >= -r / 2) && (y <= -x - r / 2))
                 || ((x >= 0) && (y <= 0) && ((x * x + y * y) <= (r * r / 4)));
+    }
+
+    public boolean checkAreaForGraph(Double x, Double y, Double r) {
+        return -1*graphBoundary <= x && x <= graphBoundary && -1*graphBoundary <= y && y <= graphBoundary && rMin <= r && r <= rMax;
     }
 }

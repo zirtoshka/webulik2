@@ -16,7 +16,15 @@
     <url-pattern>/result</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>badRequest</servlet-name>
+    <jsp-file>/badRequest.jsp</jsp-file>
+  </servlet>
 
+  <servlet-mapping>
+    <servlet-name>badRequest</servlet-name>
+    <url-pattern>/badRequest</url-pattern>
+  </servlet-mapping>
 
 
 </web-app>

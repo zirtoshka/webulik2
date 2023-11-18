@@ -3,9 +3,10 @@
 
 const resultsDataKey = "results";
 import {showToast} from './utils.js';
-import {drawGraph, drawPointsFromJson} from "./graph.js";
+import {drawGraph, drawPoint, drawPointsFromJson, points} from "./graph.js";
 
 export class Checker {
+
 
 
     constructor() {
@@ -29,7 +30,7 @@ export class Checker {
         this.setupEventListenersX();
         this.setupEventListenersR();
         this.setupEventListenersY();
-        this.setupEventListenersDIsableVideo();
+        this.setupEventListenersDisableVideo();
 
         this.sessionStorage = window.sessionStorage;
         this.resultsTable = document.getElementById("results-content");
@@ -44,12 +45,12 @@ export class Checker {
     }
 
 
-    setupEventListenersDIsableVideo() {
+    setupEventListenersDisableVideo() {
         this.disableVideoCheckbox.addEventListener('click', this.handleDisableVideoSelectChange.bind(this));
     }
 
     handleDisableVideoSelectChange(event) {
-        localStorage.setItem("disable-video-state", this.disableVideoCheckbox.checked);
+        this.sessionStorage.setItem("disable-video-state", this.disableVideoCheckbox.checked);
     }
 
     setupEventListenersY() {
@@ -59,7 +60,7 @@ export class Checker {
 
     handleYInputChange(event) {
         this.yInput.value = event.target.value;
-        localStorage.setItem("y-value", this.yInput.value);
+        this.sessionStorage.setItem("y-value", this.yInput.value);
     }
 
     setupEventListenersR() {
@@ -78,31 +79,25 @@ export class Checker {
 
     handleRadioChange(event) {
         this.rValue = event.target.value;
-        localStorage.setItem("r-value", this.rValue);
+        this.sessionStorage.setItem("r-value", this.rValue);
         drawGraph();
         const storedPoints = sessionStorage.getItem('points');
         if (storedPoints) {
             drawPointsFromJson(storedPoints);
         }
-        console.log(this.rValue);
     }
 
     handleCheckboxChange(event) {
         let checkboxValue = event.target.value;
-        // Проверяем, был ли данный чекбокс отмечен или снят
         if (event.target.checked) {
-            // Если отмечен, добавляем значение в массив
             this.xValues.push(checkboxValue);
         } else {
-            // Если снят, удаляем значение из массива
             const index = this.xValues.indexOf(checkboxValue);
             if (index !== -1) {
                 this.xValues.splice(index, 1);
             }
         }
-        // Сохраняем обновленные значения в localStorage
-        localStorage.setItem("x-value", JSON.stringify(this.xValues));
-        console.log(this.xValues);
+        this.sessionStorage.setItem("x-value", JSON.stringify(this.xValues));
     }
 
 
@@ -112,10 +107,9 @@ export class Checker {
         const rValues = [1, 2, 3, 4, 5];
         let parsedY, parsedR;
 
-
         let parsedX = x.map(value => parseInt(value.trim()));
 
-        if (parsedX.length == 0) {
+        if (parsedX.length === 0) {
             showToast("Please choose value for x. It can't be null");
             return [null, null, null];
         }
@@ -126,9 +120,9 @@ export class Checker {
             }
         });
 
-        parsedY = parseFloat(y);
-        // console.log(/parsedY)
-        if (isNaN(y.trim()) || isNaN(parsedY) || yMin >= parsedY || parsedY >= yMax) {
+        parsedY = parseFloat(y.indexOf(",") ? y.replace(",", ".") : y);
+
+        if (isNaN(parsedY) || yMin >= parsedY || parsedY >= yMax) {
             showToast("Please input correct Y value: (-5; 3)");
             return [null, null, null];
         }
@@ -151,7 +145,14 @@ export class Checker {
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
+
         if (x !== null && y !== null && r !== null) {
+            for (let xCord of x) {
+                drawPoint(xCord, y);
+                let newPoint = {x: xCord, y: y};
+                points.push(newPoint);
+            }
+            this.sessionStorage.setItem('points', JSON.stringify(points));
             try {
                 const response = await fetch("app", {
                     method: "POST",
@@ -162,30 +163,17 @@ export class Checker {
                     },
                     body: JSON.stringify({x, y, r, isForm})
                 }).then(response => {
+
                     if (response.redirected) {
                         window.location.href = response.url;
                     }
+
                 }).catch(function (err) {
-                    console.info(err + " url: " + url);
+                    console.info(err + " url: " + response.url);
                 });
-                // const json = await response.json();
-                // if (response.status === 200) {
-                //     if (!document.getElementById("disable-video").checked) {
-                //         let isKill = false;
-                //         if (json.result === "kill") {
-                //             isKill = true;
-                //         }
-                //         await this.animations.shoot(x, y, r, isKill);
-                //     }
-                //
-                //
-                //     var data = [x, y, r, json.now, json.script_time, json.result];
-                //     this.addTableResults(data);
-                // } else {
-                //     this.showToast("Server error: " + json.message);
-                // }
+
+
             } catch (error) {
-                console.log(ErrorEvent + error);
                 showToast("Server unreachable :(\nTry again later ");
             }
         }
@@ -202,7 +190,7 @@ export class Checker {
         document.querySelectorAll('td[style="color: red;"]').forEach(cell => cell.removeAttribute("style"));
 
         rowData.forEach(cellData => {
-            var cell = row.insertCell();
+            let cell = row.insertCell();
             cell.innerHTML = cellData;
 
             if (cellData === "kill") {
@@ -218,8 +206,7 @@ export class Checker {
 
 
     restoreFormValues() {
-        // Восстановление значений полей из localStorage
-        const xValuesNew = localStorage.getItem("x-value");
+        const xValuesNew = this.sessionStorage.getItem("x-value");
         if (xValuesNew) {
             this.xValues = JSON.parse(xValuesNew);
 
@@ -228,12 +215,12 @@ export class Checker {
             });
         }
 
-        const yValue = localStorage.getItem("y-value");
+        const yValue = this.sessionStorage.getItem("y-value");
         if (yValue) {
             this.yInput.value = yValue;
         }
 
-        const rValueNew = localStorage.getItem("r-value");
+        const rValueNew = this.sessionStorage.getItem("r-value");
         if (rValueNew) {
             this.rValue = rValueNew;
             this.rRadios.forEach(radioButton => {
