@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -28,9 +29,7 @@ public class AreaCheckServlet extends HttpServlet {
     DataChecker dataChecker = new DataChecker();
     ObjectMapper mapper = new ObjectMapper();
 
-    private PointsStorage getTableContent(HttpSession session) {
-        return (session.getAttribute("tableContent") == null) ? new PointsStorage() : (PointsStorage) session.getAttribute("tableContent");
-    }
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -40,35 +39,33 @@ public class AreaCheckServlet extends HttpServlet {
 
         PrintWriter writer = resp.getWriter();
         PointsStorage tableContent = getTableContent(session);
-
-
         List<Point> points = tableContent.getPoints();
         JsonNode requestData = mapper.readTree(req.getReader());
         Double x = null;
         List<Double> xValues = null;
-        Double y = null;
-        Double r = null;
+        BigDecimal y = null;
+        BigDecimal r = null;
         Boolean isForm = null;
 
         try {
             JsonNode xNode = requestData.get("x");
             xValues = getPointsList(xNode);
-            y = requestData.get("y").asDouble();
-             r = requestData.get("r").asDouble();
+            y = new BigDecimal(String.valueOf((requestData.get("y"))).replace("\"",""));
+             r = BigDecimal.valueOf(requestData.get("r").asDouble());
              isForm = requestData.get("isForm").asBoolean();
         } catch (Exception e) {
             resp.sendRedirect("./badRequest");
         }
 
 
-
-        if (isForm == null) {
+    if (!resp.isCommitted()){
+        if (isForm == null ) {
             resp.sendRedirect("./badRequest");
         }if(isForm){
             for (Double xV : xValues) {
                 try {
-                    if (dataChecker.checkXYR(xV, y, r)) {
-                        addToTableContent(xV, y, r, tableContent, req);
+                    if (dataChecker.checkXYR(BigDecimal.valueOf(xV), y, r)) {
+                        addToTableContent(BigDecimal.valueOf(xV), y, r, tableContent, req);
                     }
                 } catch (WrongDataException e) {
                     resp.sendRedirect("./badRequest");
@@ -82,7 +79,7 @@ public class AreaCheckServlet extends HttpServlet {
         } else {
             x = requestData.get("x").asDouble();
 
-            if (dataChecker.checkAreaForGraph(x,y,r)) {
+            if (dataChecker.checkAreaForGraph(BigDecimal.valueOf(x),y,r)) {
 
                 Gson gson = new Gson();
                 Map<String, Object> json = new HashMap<>();
@@ -91,15 +88,15 @@ public class AreaCheckServlet extends HttpServlet {
                 json.put("r", r);
                 json.put("nowTime", dataFormatter(LocalDateTime.now()));
                 json.put("script_time", System.currentTimeMillis() - startTime + " ms");
-                json.put("result", dataChecker.checkKill(x, y, r) ? "kill" : "miss");
+                json.put("result", dataChecker.checkKill(BigDecimal.valueOf(x), y, r) ? "kill" : "miss");
                 String jsonString = gson.toJson(json);
 
                 resp.setContentType("application/json");
                 resp.getWriter().write(jsonString);
 
-                addToTableContent(x, y, r, tableContent, req);
+                addToTableContent(BigDecimal.valueOf(x), y, r, tableContent, req);
             }
-        }
+        }}
 
 
         writer.close();
@@ -108,9 +105,11 @@ public class AreaCheckServlet extends HttpServlet {
     }
 
 
+    private PointsStorage getTableContent(HttpSession session) {
+        return (session.getAttribute("tableContent") == null) ? new PointsStorage() : (PointsStorage) session.getAttribute("tableContent");
+    }
 
-
-    private void addToTableContent(Double x, Double y, Double r, PointsStorage tableContent, HttpServletRequest req) {
+    private void addToTableContent(BigDecimal x, BigDecimal y, BigDecimal r, PointsStorage tableContent, HttpServletRequest req) {
         Point point = new Point(x, y, r, dataChecker.checkKill(x, y, r),
                 System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
         tableContent.addPoint(point);

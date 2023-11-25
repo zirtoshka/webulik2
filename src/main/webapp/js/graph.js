@@ -6,48 +6,49 @@ const centerX = canvas.width / 2;
 const centerY = canvas.height / 2;
 const pxR = 50;
 const ctx = canvas.getContext('2d');
-export var points = [];
+//export var points = [];
 
 
 document.addEventListener('DOMContentLoaded', function () {
     drawGraph();
-    const storedPoints = sessionStorage.getItem('points');
+    let storedPoints = sessionStorage.getItem('points');
     if (storedPoints) {
-        points = JSON.parse(storedPoints);
-        drawPointsFromJson(storedPoints);
+        //points = JSON.parse(storedPoints);
+        drawPoints();
+    } else {
+        sessionStorage.setItem('points', JSON.stringify([]));
     }
     const cleanTable = document.getElementById("clean-table");
-    cleanTable.addEventListener('click', clearTable);
-
-
-    canvas.addEventListener('click', function (event) {
-        if (check.rValue == null) showToast("Can't find coordinates, please choose value for r")
-        else {
-            let loc = windowToCanvas(canvas, event.clientX, event.clientY);
-            let x = xFromCanvas(loc.x);
-            let y = yFromCanvas(loc.y);
-            const newPoint = {x: x, y: y};
-            points.push(newPoint);
-            drawPoint(x, y);
-            sessionStorage.setItem('points', JSON.stringify(points));
-            sendToServer(x, y, check.rValue).then(r => console.log(r));
-        }
-    });
+    cleanTable.addEventListener('click', doRequestToClear);
 });
 
-export function drawPointsFromJson(jsonPoints) {
-    const parsedPoints = JSON.parse(jsonPoints);
-    for (const point of parsedPoints) {
-        drawPoint(point.x, point.y);
-        points.push(point);
+canvas.addEventListener('click', function (event) {
+    if (check.rValue == null) showToast("Can't find coordinates, please choose value for r")
+    else {
+        let loc = windowToCanvas(canvas, event.clientX, event.clientY);
+        let x = xFromCanvas(loc.x);
+        let y = yFromCanvas(loc.y);
+        let storagePoints = JSON.parse(sessionStorage.getItem('points'));
+
+        storagePoints.push(JSON.stringify({"x": x, "y": y}));
+
+        sessionStorage.setItem('points', JSON.stringify(storagePoints));
+
+        drawPoint(x, y);
+        sendToServer(x, y, check.rValue).then(r => console.log(r));
     }
-    sessionStorage.setItem('points', JSON.stringify(points));
+});
+
+export function drawPoints() {
+    let points = JSON.parse(sessionStorage.getItem('points'));
+    for (const point of points) {
+        drawPoint(point.x, point.y);
+    }
 }
 
 
 function clearTable() {
-    points = [];
-    sessionStorage.setItem('points', points);
+    sessionStorage.setItem('points', JSON.stringify([]));
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -59,17 +60,15 @@ function clearTable() {
         table.deleteRow(i);
     }
 
-    doRequestToClear();
 }
 
-function doRequestToClear() {
+ function doRequestToClear() {
     let action = "clear";
-    fetch('clear', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({action})
+     fetch("app", {
+        method: "GET",
+        data: action
+    }).then(response => {
+        clearTable()
     })
         .catch(error => {
             console.error('Error:', error);
@@ -173,9 +172,9 @@ export function drawPoint(x, y) {
     y = yToCanvas(y);
     ctx.beginPath();
     ctx.fillStyle = 'rgb(17,3,3)';
-    ctx.moveTo(x,y);
+    ctx.moveTo(x, y);
     // ctx.fillRect(x, y, 3, 3);
-    ctx.arc(x, y, 1.5, 0,Math.PI*2);
+    ctx.arc(x, y, 1.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = 'rgba(245,87,245,0.73)';

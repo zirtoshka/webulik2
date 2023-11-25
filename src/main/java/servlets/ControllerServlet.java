@@ -2,28 +2,36 @@ package servlets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 @WebServlet(name = "Controller", value = "/app")
 public class ControllerServlet extends HttpServlet {
-    ObjectMapper mapper = new ObjectMapper();
+    Gson gson = new Gson();
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setHeader("Access-Control-Allow-Origin", "*");
+
         getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
+
 
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+
+        getServletContext().getRequestDispatcher("/clear").forward(req, resp);
     }
 
     @Override

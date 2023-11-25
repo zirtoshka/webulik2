@@ -3,10 +3,9 @@
 
 const resultsDataKey = "results";
 import {showToast} from './utils.js';
-import {drawGraph, drawPoint, drawPointsFromJson, points} from "./graph.js";
+import {drawGraph, drawPoints} from "./graph.js";
 
 export class Checker {
-
 
 
     constructor() {
@@ -81,10 +80,7 @@ export class Checker {
         this.rValue = event.target.value;
         this.sessionStorage.setItem("r-value", this.rValue);
         drawGraph();
-        const storedPoints = sessionStorage.getItem('points');
-        if (storedPoints) {
-            drawPointsFromJson(storedPoints);
-        }
+        drawPoints();
     }
 
     handleCheckboxChange(event) {
@@ -120,9 +116,13 @@ export class Checker {
             }
         });
 
-        parsedY = parseFloat(y.indexOf(",") ? y.replace(",", ".") : y);
 
-        if (isNaN(parsedY) || yMin >= parsedY || parsedY >= yMax) {
+        parsedY = y.replace(",", ".");
+        let newY = y.substring(0, y.indexOf(".") + 6);
+        let yCheck = parseFloat(newY);
+
+
+        if (isNaN(parsedY) || yMin >= yCheck || yCheck >= yMax) {
             showToast("Please input correct Y value: (-5; 3)");
             return [null, null, null];
         }
@@ -145,14 +145,10 @@ export class Checker {
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
+        console.log(JSON.stringify({x, y, r, isForm}));
 
         if (x !== null && y !== null && r !== null) {
-            for (let xCord of x) {
-                drawPoint(xCord, y);
-                let newPoint = {x: xCord, y: y};
-                points.push(newPoint);
-            }
-            this.sessionStorage.setItem('points', JSON.stringify(points));
+
             try {
                 const response = await fetch("app", {
                     method: "POST",
@@ -163,7 +159,11 @@ export class Checker {
                     },
                     body: JSON.stringify({x, y, r, isForm})
                 }).then(response => {
-
+                    let storagePoints = JSON.parse(sessionStorage.getItem('points'));
+                    for (const newX of x) {
+                        storagePoints.push(JSON.stringify({"x": newX, "y": y}));
+                    }
+                    this.sessionStorage.setItem('points', JSON.stringify(storagePoints));
                     if (response.redirected) {
                         window.location.href = response.url;
                     }

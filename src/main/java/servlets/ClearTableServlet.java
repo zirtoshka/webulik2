@@ -10,7 +10,7 @@ import java.io.IOException;
 @WebServlet(name = "Clear", value="/clear")
 public class ClearTableServlet extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         session.removeAttribute("tableContent");
     }

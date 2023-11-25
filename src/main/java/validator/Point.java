@@ -1,16 +1,17 @@
 package validator;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class Point implements Serializable {
-    private final double x;
-    private final double y;
-    private final double r;
+    private final BigDecimal x;
+    private final BigDecimal y;
+    private final BigDecimal r;
     boolean isKill;
     String scriptTime;
     String now;
 
-    public Point(double x, double y, double r, boolean isKill, String scriptTime, String now) {
+    public Point(BigDecimal x, BigDecimal y, BigDecimal r, boolean isKill, String scriptTime, String now) {
         this.x = x;
         this.y = y;
         this.now = now;
@@ -22,15 +23,15 @@ public class Point implements Serializable {
         return now;
     }
 
-    public double getR() {
+    public BigDecimal getR() {
         return r;
     }
 
-    public double getX() {
+    public BigDecimal getX() {
         return x;
     }
 
-    public double getY() {
+    public BigDecimal getY() {
         return y;
     }
 

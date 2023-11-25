@@ -79,8 +79,7 @@
             <br>
             <div class="y-input">
                 <label id="y-label">Y: </label>
-                <input class="y-text" id="y-value" name="y" type="text" required title="Y must be in range (-5, 3)"
-                       maxlength="10">
+                <input class="y-text" id="y-value" name="y" type="text" required title="Y must be in range (-5, 3)">
             </div>
             <br>
             <div class="r-input">
