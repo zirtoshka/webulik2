@@ -25,16 +25,12 @@ import java.util.*;
 @WebServlet(name = "AreaCheck", value = "/area-check")
 public class AreaCheckServlet extends HttpServlet {
 
-    long startTime;
-    DataChecker dataChecker = new DataChecker();
-    ObjectMapper mapper = new ObjectMapper();
-
-
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DataChecker dataChecker = new DataChecker();
+        ObjectMapper mapper = new ObjectMapper();
 
-        startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         HttpSession session = req.getSession();
 
         PrintWriter writer = resp.getWriter();
@@ -65,7 +61,7 @@ public class AreaCheckServlet extends HttpServlet {
             for (Double xV : xValues) {
                 try {
                     if (dataChecker.checkXYR(BigDecimal.valueOf(xV), y, r)) {
-                        addToTableContent(BigDecimal.valueOf(xV), y, r, tableContent, req);
+                        addToTableContent(BigDecimal.valueOf(xV), y, r, startTime, tableContent, dataChecker);
                     }
                 } catch (WrongDataException e) {
                     resp.sendRedirect("./badRequest");
@@ -94,7 +90,7 @@ public class AreaCheckServlet extends HttpServlet {
                 resp.setContentType("application/json");
                 resp.getWriter().write(jsonString);
 
-                addToTableContent(BigDecimal.valueOf(x), y, r, tableContent, req);
+                addToTableContent(BigDecimal.valueOf(x), y, r, startTime, tableContent, dataChecker);
             }
         }}
 
@@ -109,7 +105,7 @@ public class AreaCheckServlet extends HttpServlet {
         return (session.getAttribute("tableContent") == null) ? new PointsStorage() : (PointsStorage) session.getAttribute("tableContent");
     }
 
-    private void addToTableContent(BigDecimal x, BigDecimal y, BigDecimal r, PointsStorage tableContent, HttpServletRequest req) {
+    private void addToTableContent(BigDecimal x, BigDecimal y, BigDecimal r, long startTime, PointsStorage tableContent, DataChecker dataChecker) {
         Point point = new Point(x, y, r, dataChecker.checkKill(x, y, r),
                 System.currentTimeMillis() - startTime + " ms", dataFormatter(LocalDateTime.now()));
         tableContent.addPoint(point);

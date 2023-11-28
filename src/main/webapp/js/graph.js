@@ -12,11 +12,14 @@ const ctx = canvas.getContext('2d');
 document.addEventListener('DOMContentLoaded', function () {
     drawGraph();
     let storedPoints = sessionStorage.getItem('points');
+    console.log(storedPoints);
     if (storedPoints) {
+        console.log("lolik");
         //points = JSON.parse(storedPoints);
         drawPoints();
     } else {
         sessionStorage.setItem('points', JSON.stringify([]));
+        console.log("bolik");
     }
     const cleanTable = document.getElementById("clean-table");
     cleanTable.addEventListener('click', doRequestToClear);
@@ -41,7 +44,9 @@ canvas.addEventListener('click', function (event) {
 
 export function drawPoints() {
     let points = JSON.parse(sessionStorage.getItem('points'));
-    for (const point of points) {
+    for (const pointString of points) {
+        const point = JSON.parse(pointString);
+        console.log(point.x);
         drawPoint(point.x, point.y);
     }
 }
@@ -62,9 +67,9 @@ function clearTable() {
 
 }
 
- function doRequestToClear() {
+function doRequestToClear() {
     let action = "clear";
-     fetch("app", {
+    fetch("app", {
         method: "GET",
         data: action
     }).then(response => {

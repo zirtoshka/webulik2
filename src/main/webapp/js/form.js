@@ -22,7 +22,7 @@ export class Checker {
         this.disableVideoCheckbox = document.getElementById("disable-video");
 
 
-        let disableVideoState = localStorage.getItem("disable-video-state");
+        let disableVideoState = sessionStorage.getItem("disable-video-state");
         this.disableVideoCheckbox.checked = disableVideoState === "true";
 
 
@@ -145,7 +145,6 @@ export class Checker {
 
         const [x, y, r] = this.validateAndParse(this.xValues, this.yInput.value, this.rValue);
 
-        console.log(JSON.stringify({x, y, r, isForm}));
 
         if (x !== null && y !== null && r !== null) {
 
@@ -228,6 +227,7 @@ export class Checker {
             });
 
         }
+
     }
 
 

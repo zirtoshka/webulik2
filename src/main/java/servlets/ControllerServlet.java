@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 @WebServlet(name = "Controller", value = "/app")
 public class ControllerServlet extends HttpServlet {
-    Gson gson = new Gson();
+
 
 
     @Override
