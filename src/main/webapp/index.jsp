@@ -140,7 +140,7 @@
             <input type="radio" name="answer" id="Keep going" value="Keep going"/><span>Keep going</span>
             <input type="radio" name="answer" id="DOM is home" value="DOM is home"/><span>DOM is home</span>
             <input type="radio" name="answer" id="Good job! redo" value="Good job!<br> redo"/><span>Good job!<br> redo</span>
-            <input type="radio" name="answer" id="0,01 from burevestnik" value="0,01 from burevestnik"/><span>0,01 from <br> burevestnik</span>
+            <input type="radio" name="answer" id="10 from burevestnik" value="10 from burevestnik"/><span>10 from <br> burevestnik</span>
             <input type="radio" name="answer" id="Guys, it's webchik" value="Guys, it's webchik"/><span>Guys, it's<br>webchik</span>
             <input type="radio" name="answer" id="Angular" value="Angular"/><span>Angular</span>
             <input type="radio" name="answer" id="React" value="React"/><span>React</span>
@@ -192,7 +192,7 @@
                         <label for="Good job! redo"></label>
                     </li>
                     <li>
-                        <label for="0,01 from burevestnik"></label>
+                        <label for="10 from burevestnik"></label>
                     </li>
                     <li>
                         <label for="Guys, it's webchik"></label>
