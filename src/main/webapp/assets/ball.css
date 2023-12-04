@@ -1,0 +1,319 @@
+/* свойства width и height пусть задают размеры не контента, а блока */
+* {
+    box-sizing: border-box;
+}
+
+/* общие настройки страницы */
+
+
+/* настройки виртуальной формы */
+.ball-form {
+    /* радиус скругления */
+    border-radius: 100%;
+    /* меняем внешний вид курсора */
+    cursor: pointer;
+    /* размеры блока */
+    height: 300px;
+    width: 300px;
+    /* используем относительное позиционирование */
+    position: relative;
+}
+
+/* меняем внешний вид курсора на всех элементах внутри виртуальной формы  */
+.ball-form * {
+    cursor: pointer;
+}
+
+/* скрываем все радиокнопки и виртуально выравниваем их по левому краю */
+.ball-form [type='radio'] {
+    display: none;
+    left: 100%;
+    position: absolute;
+}
+
+/* настройки виртуальной кнопки сброса */
+.ball-form [type='reset'] {
+    /* скрываем её с экрана */
+    display: none;
+    /* размеры блока сброса */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /* делаем кнопку сброса прозрачной */
+    opacity: 0;
+    /* ставим её поверх остальных элементов */
+    z-index: 6;
+    /* используем абсолютное позиционирование */
+    position: absolute;
+}
+
+/* настройки элементов списка */
+.ball-form li {
+    /* убираем отступы */
+    margin: 0;
+    padding: 0;
+    /* задаём размеры */
+    height: 300px;
+    width: 300px;
+}
+
+/* настройки подписей к радиокнопкам */
+.ball-form label {
+    /* используем блочный элемент */
+    display: block;
+    /* задаём размеры */
+    height: 100%;
+    width: 100%;
+}
+
+/* настройки таблицы с ответами */
+.ball-form ul {
+    /* задаём плавающую анимацию ответов для разных движков браузера */
+    -webkit-animation: scale 7s infinite steps(20);
+    animation: scale 7s infinite steps(20);
+    /* положение и размеры */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* убираем отступы */
+    margin: 0;
+    padding: 0;
+    /* используем абсолютное позиционирование */
+    position: absolute;
+    /* располагаем их на слое пониже, под кнопкой сброса */
+    z-index: 5;
+}
+
+/* настройки восьмёрки */
+.ball-form .eight {
+    /* радиус скругления */
+    border-radius: 100%;
+    /* высота и ширина */
+    width: 100%;
+    height: 100%;
+    /* скрываем всё, что выходит за пределы блока */
+    overflow: hidden;
+    /* используем относительное позиционирование */
+    position: relative;
+    /* располагаем восьмёрку ещё ниже слоем, под слоем с таблицей */
+    z-index: 4;
+}
+
+/* фон шара */
+.ball-form .eight__backdrop {
+    /* делаем градиентный фон */
+    background: radial-gradient(circle at 5% 5%, #afedf6, #806ae7 50%), #bf50ff;
+    /* радиус скругления */
+    border-radius: 100%;
+    /* размеры и положение элемента */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /* используем абсолютное позиционирование */
+    position: absolute;
+}
+
+/* настройки числа 8 на шаре */
+.ball-form .eight__number {
+    /* выравниваем всё по центру */
+    justify-content: center;
+    align-items: center;
+    /* настройки фона и шрифта */
+    background: #fff;
+    border-radius: 100%;
+    display: flex;
+    font-size: 125px;
+    /* размеры и положение элемента */
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    /* используем абсолютное позиционирование */
+    position: absolute;
+    /* сдвигаем восьмёрку наверх */
+    transform: translate(-50%, -50%);
+}
+
+/* окно с ответами */
+.ball-form .eight__window {
+    /* фон и граница */
+    background: radial-gradient(transparent, #a84cf3);
+    border: 10px double #e594ee;
+    /* радиус скругления */
+    border-radius: 100%;
+    /* высота и положение элемента */
+    width: calc(50% + 20px);
+    height: calc(50% + 20px);
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    /* сдвигаем окно с ответом наверх */
+    transform: translate(-50%, -50%);
+}
+
+/* размеры лицевой части восьмёрки */
+.ball-form .eight__fascia {
+    height: 300px;
+    position: relative;
+    width: 300px;
+}
+
+/* настройки внешнего вида ответов */
+.ball-form span {
+    /* цвет фона, текста и тени */
+    background: #00f;
+    color: #fff;
+    text-shadow: 1px 1px 0 #bfbfbf;
+    /* используем абсолютное позиционирование */
+    position: absolute;
+    /* размеры и положение блока */
+    top: 50%;
+    left: 50%;
+    width: 45%;
+    height: 45%;
+    /* сдвигаем текст */
+    transform: translate(-50%, -50%);
+    /* переводим текст в верхний регистр */
+    text-transform: uppercase;
+    /* выравниваем всё по центру */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* делаем ответ полностью прозрачным */
+    opacity: 0;
+    /* настраиваем анимацию колебаний в разных движках */
+    -webkit-animation-duration: 10s;
+    animation-duration: 10s;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: floaty;
+    animation-name: floaty;
+    /* распологаем блок с ответами ниже всех предыдущих */
+    z-index: 2;
+}
+
+
+/* треугольник с чётными ответами */
+.ball-form span:nth-of-type(even) {
+    /* треугольник направлен вверх */
+    clip-path: polygon(0 100%, 50% 20%, 100% 100%);
+    -webkit-clip-path: polygon(0 100%, 50% 20%, 100% 100%);
+    /* выравниваем по низу треугольника */
+    align-items: flex-end;
+    /* отступ и размер */
+    padding-bottom: 5%;
+    top: 40%;
+}
+
+
+/* треугольник с нечётными ответами */
+.ball-form span:nth-of-type(odd) {
+    /* треугольник направлен вниз */
+    clip-path: polygon(0 0, 50% 80%, 100% 0);
+    -webkit-clip-path: polygon(0 0, 50% 80%, 100% 0);
+    /* выравниваем по верху треугольника */
+    align-items: flex-start;
+    /* отступ и размер */
+    padding-top: 5%;
+    top: 60%;
+}
+
+
+/* если видна восьмёрка и щёлкнули по ней или по шару в целом */
+.ball-form [type='radio']:checked ~ .eight,
+.ball-form [type='radio']:checked ~ .eight__backdrop {
+    /* запускаем анимацию встряски шара */
+    -webkit-animation: shake 0.25s 4;
+    animation: shake 0.25s 4;
+}
+
+/* если щёлкнули по ответу */
+.ball-form [type='radio']:checked ~ .eight .eight__fascia {
+    /* показываем восьмёрку */
+    transform: translate(0, -100%);
+    transition: transform 0.25s 1.25s ease;
+}
+
+/* если шар встряхнули, показываем выбранный ответ — делаем его видимым */
+.ball-form [type='radio']:checked + span {
+    opacity: 1;
+    transition: opacity 1s 1.7s;
+}
+
+/* если нажали кнопку сброса */
+.ball-form [type='radio']:checked ~ [type='reset'] {
+    /* превращаем это в блочный элемент */
+    display: block;
+}
+
+/* анимация для выбора следующего элемента */
+@-webkit-keyframes scale {
+    to {
+        transform: translateY(-100%);
+    }
+}
+@keyframes scale {
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+/* анимация плавающих ответов в разных движках */
+@-webkit-keyframes floaty {
+    0%, 100% {
+        transform: translate(-50%, -50%);
+    }
+    25% {
+        transform: translate(-50%, -50%) translate(-2%, 2%) rotate(2deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) translate(2%, -2%) rotate(-2deg);
+    }
+    75% {
+        transform: translate(-50%, -50%) translate(1%, 1%) rotate(1deg);
+    }
+}
+
+@keyframes floaty {
+    0%, 100% {
+        transform: translate(-50%, -50%);
+    }
+    25% {
+        transform: translate(-50%, -50%) translate(-2%, 2%) rotate(2deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) translate(2%, -2%) rotate(-2deg);
+    }
+    75% {
+        transform: translate(-50%, -50%) translate(1%, 1%) rotate(1deg);
+    }
+}
+
+/* анимация встряски шара в разных движках */
+@-webkit-keyframes shake {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 5px);
+    }
+    75% {
+        transform: translate(-10px, -5px);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, 5px);
+    }
+    75% {
+        transform: translate(-10px, -5px);
+    }
+}

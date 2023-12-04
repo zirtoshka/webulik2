@@ -8,6 +8,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/index.css">
+    <link rel="stylesheet" href="assets/ball.css">
+
     <title>puk labuk2</title>
 
 </head>
@@ -126,7 +128,89 @@
 
         </div>
 
-
+        <form class="ball-form">
+            <!-- ответы -->
+            <input type="radio" name="answer" id="Yes" value="Yes"/><span>Yes</span>
+            <input type="radio" name="answer" id="It seems like govnocode" value="It seems like<br> govnocode"/><span>It seems like<br> govnocode</span>
+            <input type="radio" name="answer" id="Not today" value="Not today"/><span>Не в этот<br>раз</span>
+            <input type="radio" name="answer" id="be like Naruto" value="be like<br>Naruto"/><span>be like<br>Naruto</span>
+            <input type="radio" name="answer" id="London" value="London"/><span>London</span>
+            <input type="radio" name="answer" id="Rubezhka" value="Rubezhka"/><span>Rubezhka</span>
+            <input type="radio" name="answer" id="Krosh agrees" value="Krosh agrees"/><span>Krosh agrees</span>
+            <input type="radio" name="answer" id="Keep going" value="Keep going"/><span>Keep going</span>
+            <input type="radio" name="answer" id="DOM is home" value="DOM is home"/><span>DOM is home</span>
+            <input type="radio" name="answer" id="Good job! redo" value="Good job!<br> redo"/><span>Good job!<br> redo</span>
+            <input type="radio" name="answer" id="0,01 from burevestnik" value="0,01 from burevestnik"/><span>0,01 from <br> burevestnik</span>
+            <input type="radio" name="answer" id="Guys, it's webchik" value="Guys, it's webchik"/><span>Guys, it's<br>webchik</span>
+            <input type="radio" name="answer" id="Angular" value="Angular"/><span>Angular</span>
+            <input type="radio" name="answer" id="React" value="React"/><span>React</span>
+            <input type="radio" name="answer" id="Vue" value="Vue"/><span>Vue</span>
+            <!-- шар -->
+            <div class="eight__backdrop"></div>
+            <!-- раздел с восьмёркой -->
+            <div class="eight">
+                <!-- лицевая сторона -->
+                <div class="eight__fascia">
+                    <!-- рисуем восьмёрку -->
+                    <div class="eight__number">8</div>
+                </div>
+                <!-- обратная сторона -->
+                <div class="eight__fascia">
+                    <!-- окно с ответом -->
+                    <div class="eight__window"></div>
+                </div>
+                <!-- таблица c названиями ответов -->
+                <ul>
+                    <li>
+                        <label for="Yes"></label>
+                    </li>
+                    <li>
+                        <label for="It seems like govnocode"></label>
+                    </li>
+                    <li>
+                        <label for="Not today"></label>
+                    </li>
+                    <li>
+                        <label for="be like Naruto"></label>
+                    </li>
+                    <li>
+                        <label for="London"></label>
+                    </li>
+                    <li>
+                        <label for="Rubezhka"></label>
+                    </li>
+                    <li>
+                        <label for="Krosh agrees"></label>
+                    </li>
+                    <li>
+                        <label for="Keep going"></label>
+                    </li>
+                    <li>
+                        <label for="DOM is home"></label>
+                    </li>
+                    <li>
+                        <label for="Good job! redo"></label>
+                    </li>
+                    <li>
+                        <label for="0,01 from burevestnik"></label>
+                    </li>
+                    <li>
+                        <label for="Guys, it's webchik"></label>
+                    </li>
+                    <li>
+                        <label for="Angular"></label>
+                    </li>
+                    <li>
+                        <label for="Vue"></label>
+                    </li>
+                    <li>
+                        <label for="React"></label>
+                    </li>
+                </ul>
+            </div>
+            <!-- кнопка сброса -->
+            <input type="reset"/>
+        </form>
     </div>
 
 
@@ -194,6 +278,8 @@
 
     </div>
 </div>
+
+
 
 <script src="js/animations.js" type="text/javascript"></script>
 <script src="js/form.js" type="module"></script>

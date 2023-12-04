@@ -24,7 +24,6 @@ public class ControllerServlet extends HttpServlet {
 
         getServletContext().getRequestDispatcher("/area-check").forward(req, resp);
 
-
     }
 
     @Override
